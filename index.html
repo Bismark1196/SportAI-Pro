@@ -2,2942 +2,766 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SportAI — Professional Match Predictions</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<style>
-/* ============================================================
-   RESET & ROOT
-============================================================ */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg-0:#070b14;
-  --bg-1:#0d1220;
-  --bg-2:#121929;
-  --bg-3:#182035;
-  --bg-card:#151c2e;
-  --bg-hover:#1c253c;
-  --border:#1e2a42;
-  --border-lt:#2a3a58;
-
-  --gold:#f0a500;
-  --gold-lt:#ffc137;
-  --gold-dk:#c07d00;
-  --gold-glow:rgba(240,165,0,.18);
-
-  --red:#e63946;
-  --red-dk:#b52a35;
-  --red-glow:rgba(230,57,70,.15);
-
-  --green:#2ec27e;
-  --green-lt:#5dd4a0;
-  --green-glow:rgba(46,194,126,.15);
-
-  --blue:#3a8ef6;
-  --blue-lt:#7ab4fa;
-  --blue-glow:rgba(58,142,246,.15);
-
-  --text-1:#f0f2f8;
-  --text-2:#8a9bbf;
-  --text-3:#4a5878;
-  --text-4:#2e3a50;
-
-  --f-display:'Bebas Neue',sans-serif;
-  --f-body:'DM Sans',sans-serif;
-  --f-mono:'JetBrains Mono',monospace;
-
-  --r:6px;
-  --r-lg:12px;
-  --shadow:0 4px 24px rgba(0,0,0,.4);
-  --shadow-gold:0 0 32px rgba(240,165,0,.2);
-}
-
-html,body{
-  min-height:100%;
-  background:var(--bg-0);
-  color:var(--text-1);
-  font-family:var(--f-body);
-  font-size:14px;
-  line-height:1.5;
-  overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;
-}
-button{cursor:pointer;font-family:var(--f-body)}
-input,select,textarea{font-family:var(--f-body)}
-a{color:inherit;text-decoration:none}
-img{display:block;max-width:100%}
-::-webkit-scrollbar{width:4px;height:4px}
-::-webkit-scrollbar-track{background:var(--bg-1)}
-::-webkit-scrollbar-thumb{background:var(--border-lt);border-radius:2px}
-
-/* ============================================================
-   AUTH SCREENS (Login / Signup)
-============================================================ */
-#auth-screen{
-  display:flex;
-  min-height:100vh;
-  position:relative;
-  overflow:hidden;
-}
-#auth-screen.hidden{display:none}
-
-/* animated background */
-.auth-bg{
-  position:absolute;inset:0;
-  background:
-    radial-gradient(ellipse 80% 60% at 20% 50%, rgba(240,165,0,.06) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 80% at 80% 30%, rgba(58,142,246,.05) 0%, transparent 60%),
-    var(--bg-0);
-  z-index:0;
-}
-.auth-bg-grid{
-  position:absolute;inset:0;
-  background-image:
-    linear-gradient(var(--border) 1px, transparent 1px),
-    linear-gradient(90deg, var(--border) 1px, transparent 1px);
-  background-size:60px 60px;
-  opacity:.3;
-  z-index:0;
-}
-
-/* left panel — branding */
-.auth-left{
-  flex:0 0 52%;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  padding:60px 64px;
-  position:relative;
-  z-index:1;
-}
-@media(max-width:860px){.auth-left{display:none}}
-
-.auth-brand{
-  font-family:var(--f-display);
-  font-size:72px;
-  letter-spacing:3px;
-  line-height:1;
-  margin-bottom:8px;
-}
-.auth-brand span{color:var(--gold)}
-.auth-tagline{
-  font-size:18px;
-  color:var(--text-2);
-  margin-bottom:56px;
-  font-weight:300;
-  letter-spacing:.5px;
-}
-
-.auth-feature-list{display:flex;flex-direction:column;gap:20px;margin-bottom:56px}
-.auth-feature{
-  display:flex;align-items:flex-start;gap:16px;
-  padding:20px 24px;
-  background:rgba(255,255,255,.03);
-  border:1px solid var(--border);
-  border-radius:var(--r-lg);
-  transition:border-color .2s,background .2s;
-}
-.auth-feature:hover{background:rgba(255,255,255,.05);border-color:var(--border-lt)}
-.af-icon{
-  font-size:24px;
-  width:48px;height:48px;
-  background:var(--gold-glow);
-  border:1px solid rgba(240,165,0,.2);
-  border-radius:var(--r);
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;
-}
-.af-title{font-size:15px;font-weight:600;margin-bottom:3px}
-.af-desc{font-size:12px;color:var(--text-2);line-height:1.4}
-
-.auth-stats-row{
-  display:flex;gap:32px;
-  padding-top:32px;
-  border-top:1px solid var(--border);
-}
-.auth-stat{text-align:center}
-.auth-stat-val{
-  font-family:var(--f-display);
-  font-size:36px;
-  color:var(--gold);
-  letter-spacing:1px;
-  display:block;
-}
-.auth-stat-lbl{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:1px}
-
-/* right panel — form */
-.auth-right{
-  flex:1;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:40px 32px;
-  position:relative;
-  z-index:1;
-}
-
-.auth-card{
-  width:100%;
-  max-width:420px;
-  background:var(--bg-card);
-  border:1px solid var(--border);
-  border-radius:var(--r-lg);
-  padding:40px 36px;
-  box-shadow:var(--shadow);
-}
-@media(max-width:480px){.auth-card{padding:28px 20px}}
-
-.auth-mobile-logo{
-  display:none;
-  font-family:var(--f-display);
-  font-size:36px;
-  letter-spacing:2px;
-  color:#fff;
-  margin-bottom:24px;
-  text-align:center;
-}
-.auth-mobile-logo span{color:var(--gold)}
-@media(max-width:860px){.auth-mobile-logo{display:block}}
-
-.auth-tabs{
-  display:flex;
-  background:var(--bg-2);
-  border-radius:var(--r);
-  padding:3px;
-  margin-bottom:32px;
-}
-.auth-tab{
-  flex:1;text-align:center;
-  padding:9px;
-  border-radius:4px;
-  font-size:13px;font-weight:600;
-  color:var(--text-2);
-  border:none;background:none;
-  transition:all .2s;
-}
-.auth-tab.active{
-  background:var(--bg-card);
-  color:var(--text-1);
-  box-shadow:0 1px 4px rgba(0,0,0,.3);
-}
-
-.auth-form-title{
-  font-family:var(--f-display);
-  font-size:28px;
-  letter-spacing:1px;
-  margin-bottom:6px;
-}
-.auth-form-sub{font-size:12px;color:var(--text-2);margin-bottom:28px}
-
-.form-group{margin-bottom:18px}
-.form-label{
-  display:block;
-  font-size:11px;
-  font-weight:600;
-  text-transform:uppercase;
-  letter-spacing:1px;
-  color:var(--text-2);
-  margin-bottom:6px;
-}
-.form-input{
-  width:100%;
-  background:var(--bg-2);
-  border:1px solid var(--border);
-  border-radius:var(--r);
-  padding:11px 14px;
-  color:var(--text-1);
-  font-size:14px;
-  outline:none;
-  transition:border-color .2s,box-shadow .2s;
-}
-.form-input:focus{
-  border-color:var(--gold);
-  box-shadow:0 0 0 3px var(--gold-glow);
-}
-.form-input::placeholder{color:var(--text-3)}
-.form-input.error{border-color:var(--red);box-shadow:0 0 0 3px var(--red-glow)}
-
-.input-icon-wrap{position:relative}
-.input-icon-wrap .form-input{padding-left:40px}
-.input-icon{
-  position:absolute;left:13px;top:50%;transform:translateY(-50%);
-  font-size:15px;color:var(--text-3);pointer-events:none;
-}
-.input-toggle{
-  position:absolute;right:12px;top:50%;transform:translateY(-50%);
-  background:none;border:none;color:var(--text-3);font-size:14px;
-  cursor:pointer;padding:2px;
-}
-
-/* promo code field */
-.promo-wrap{
-  background:linear-gradient(135deg,rgba(240,165,0,.06),rgba(240,165,0,.02));
-  border:1px solid rgba(240,165,0,.25);
-  border-radius:var(--r);
-  padding:16px;
-  margin-bottom:18px;
-}
-.promo-header{
-  display:flex;align-items:center;gap:8px;
-  margin-bottom:10px;
-}
-.promo-badge{
-  background:var(--gold);
-  color:#111;
-  font-size:9px;font-weight:700;
-  letter-spacing:1px;text-transform:uppercase;
-  padding:2px 8px;border-radius:3px;
-}
-.promo-title{font-size:13px;font-weight:600}
-.promo-desc{font-size:11px;color:var(--text-2);margin-bottom:10px;line-height:1.4}
-.promo-input-row{display:flex;gap:8px}
-.promo-input-row .form-input{
-  font-family:var(--f-mono);
-  font-size:13px;
-  letter-spacing:2px;
-  text-transform:uppercase;
-  flex:1;
-}
-.promo-verify-btn{
-  padding:11px 16px;
-  background:var(--gold);
-  color:#111;
-  font-size:12px;font-weight:700;
-  border:none;border-radius:var(--r);
-  white-space:nowrap;
-  transition:background .2s;
-}
-.promo-verify-btn:hover{background:var(--gold-lt)}
-.promo-verify-btn:disabled{background:var(--text-3);color:var(--bg-2);cursor:not-allowed}
-.promo-status{
-  display:none;
-  align-items:center;gap:6px;
-  margin-top:8px;
-  font-size:12px;font-weight:600;
-}
-.promo-status.valid{display:flex;color:var(--green)}
-.promo-status.invalid{display:flex;color:var(--red)}
-
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media(max-width:400px){.form-row{grid-template-columns:1fr}}
-
-.form-error{
-  font-size:11px;color:var(--red);
-  margin-top:5px;display:none;
-}
-.form-error.show{display:block}
-
-.form-divider{
-  display:flex;align-items:center;gap:12px;
-  margin:20px 0;
-  color:var(--text-3);font-size:11px;text-transform:uppercase;letter-spacing:1px;
-}
-.form-divider::before,.form-divider::after{
-  content:'';flex:1;height:1px;background:var(--border);
-}
-
-.btn-primary{
-  width:100%;
-  padding:13px;
-  background:var(--gold);
-  color:#111;
-  font-size:14px;font-weight:700;
-  letter-spacing:.5px;
-  border:none;border-radius:var(--r);
-  transition:all .2s;
-  position:relative;
-  overflow:hidden;
-}
-.btn-primary::after{
-  content:'';
-  position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(255,255,255,.15),transparent);
-  opacity:0;transition:opacity .2s;
-}
-.btn-primary:hover{background:var(--gold-lt);transform:translateY(-1px);box-shadow:var(--shadow-gold)}
-.btn-primary:hover::after{opacity:1}
-.btn-primary:active{transform:translateY(0)}
-.btn-primary:disabled{background:var(--text-3);color:var(--bg-2);cursor:not-allowed;transform:none;box-shadow:none}
-
-.btn-loading{
-  display:none;
-  width:16px;height:16px;
-  border:2px solid rgba(0,0,0,.3);
-  border-top-color:#111;
-  border-radius:50%;
-  animation:spin .6s linear infinite;
-  margin:0 auto;
-}
-.btn-loading.show{display:block}
-
-.auth-footer{
-  text-align:center;
-  margin-top:24px;
-  font-size:12px;
-  color:var(--text-3);
-  line-height:1.6;
-}
-.auth-footer a{color:var(--gold);font-weight:600}
-.auth-footer a:hover{color:var(--gold-lt)}
-
-.terms-check{
-  display:flex;align-items:flex-start;gap:10px;
-  margin-bottom:20px;
-}
-.terms-check input[type=checkbox]{
-  width:16px;height:16px;
-  accent-color:var(--gold);
-  flex-shrink:0;margin-top:2px;
-}
-.terms-check label{font-size:11px;color:var(--text-2);line-height:1.4}
-.terms-check label a{color:var(--gold)}
-
-/* ============================================================
-   MAIN APP
-============================================================ */
-#app{display:none;flex-direction:column;min-height:100vh}
-#app.show{display:flex}
-
-/* ---- TOP NAV ---- */
-.top-nav{
-  height:56px;
-  background:var(--bg-1);
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;
-  padding:0 20px;gap:12px;
-  position:sticky;top:0;z-index:300;
-  flex-shrink:0;
-}
-.logo{
-  font-family:var(--f-display);
-  font-size:26px;
-  letter-spacing:2px;
-  color:#fff;
-  white-space:nowrap;
-}
-.logo span{color:var(--gold)}
-.logo-badge{
-  font-size:9px;font-weight:700;
-  background:var(--gold);color:#111;
-  padding:1px 6px;border-radius:3px;
-  vertical-align:middle;margin-left:4px;
-  letter-spacing:.5px;
-}
-.nav-spacer{flex:1}
-
-.nav-search{
-  display:flex;align-items:center;
-  background:var(--bg-2);
-  border:1px solid var(--border);
-  border-radius:var(--r);
-  padding:0 12px;gap:8px;
-  height:34px;width:240px;
-  transition:border-color .2s,width .3s;
-}
-.nav-search:focus-within{border-color:var(--gold);width:300px}
-.nav-search input{
-  background:none;border:none;outline:none;
-  color:var(--text-1);font-size:13px;width:100%;
-}
-.nav-search input::placeholder{color:var(--text-3)}
-@media(max-width:768px){.nav-search{display:none}}
-
-.live-pill{
-  background:var(--red);color:#fff;
-  font-family:var(--f-mono);font-size:10px;font-weight:600;
-  letter-spacing:1px;padding:4px 10px;border-radius:20px;
-  animation:pulse-red 2s ease-in-out infinite;
-  white-space:nowrap;
-}
-@keyframes pulse-red{0%,100%{box-shadow:0 0 0 0 var(--red-glow)}50%{box-shadow:0 0 0 6px transparent}}
-
-.nav-btn{
-  background:none;border:none;
-  color:var(--text-2);
-  font-size:18px;padding:8px;
-  border-radius:var(--r);
-  transition:all .15s;position:relative;
-}
-.nav-btn:hover{color:#fff;background:rgba(255,255,255,.06)}
-.nav-dot{
-  position:absolute;top:5px;right:5px;
-  width:7px;height:7px;
-  background:var(--red);border-radius:50%;
-  border:1.5px solid var(--bg-1);
-}
-.nav-count{
-  position:absolute;top:2px;right:2px;
-  background:var(--red);color:#fff;
-  font-family:var(--f-mono);font-size:9px;font-weight:600;
-  padding:1px 4px;border-radius:8px;
-  display:none;min-width:16px;text-align:center;
-}
-
-.user-menu-btn{
-  display:flex;align-items:center;gap:8px;
-  background:none;border:1px solid var(--border);
-  border-radius:var(--r);padding:5px 10px 5px 5px;
-  color:var(--text-2);font-size:12px;font-weight:600;
-  transition:all .15s;
-}
-.user-menu-btn:hover{border-color:var(--border-lt);color:#fff}
-.user-avatar-sm{
-  width:28px;height:28px;
-  border-radius:50%;
-  background:linear-gradient(135deg,var(--gold),var(--gold-dk));
-  color:#111;font-family:var(--f-display);font-size:13px;
-  display:flex;align-items:center;justify-content:center;
-}
-@media(max-width:480px){.user-menu-btn span:last-child{display:none}}
-
-/* hamburger */
-.hamburger{
-  display:none;
-  background:none;border:none;
-  color:var(--text-2);font-size:22px;padding:6px;
-}
-@media(max-width:900px){.hamburger{display:flex;align-items:center}}
-
-/* ---- TICKER ---- */
-.ticker{
-  background:var(--bg-1);
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;
-  padding:0 20px;
-  height:38px;
-  overflow:hidden;
-  flex-shrink:0;
-}
-.ticker-track{
-  display:flex;align-items:center;gap:0;
-  overflow-x:auto;
-  scrollbar-width:none;
-  flex:1;
-}
-.ticker-track::-webkit-scrollbar{display:none}
-.t-item{
-  display:flex;align-items:baseline;gap:5px;
-  padding:0 16px;white-space:nowrap;flex-shrink:0;
-}
-.t-val{
-  font-family:var(--f-display);font-size:20px;
-  color:var(--gold);letter-spacing:.5px;
-}
-.t-val.red{color:var(--red)}
-.t-val.green{color:var(--green)}
-.t-lbl{font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px}
-.t-sep{width:1px;height:18px;background:var(--border);flex-shrink:0}
-.ticker-time{
-  font-family:var(--f-mono);font-size:10px;color:var(--text-3);
-  padding-left:16px;white-space:nowrap;flex-shrink:0;
-  border-left:1px solid var(--border);
-  margin-left:auto;
-}
-@media(max-width:480px){
-  .t-item:nth-child(n+8){display:none}
-}
-
-/* ---- LAYOUT ---- */
-.app-body{display:flex;flex:1;min-height:0}
-
-.sidebar{
-  width:220px;
-  background:var(--bg-1);
-  border-right:1px solid var(--border);
-  display:flex;flex-direction:column;
-  position:sticky;top:94px;
-  height:calc(100vh - 94px);
-  overflow-y:auto;flex-shrink:0;
-  transition:transform .3s ease;
-}
-@media(max-width:900px){
-  .sidebar{
-    position:fixed;
-    top:0;left:0;
-    height:100vh;
-    z-index:400;
-    transform:translateX(-100%);
-    width:260px;
-  }
-  .sidebar.open{transform:translateX(0)}
-}
-
-.sidebar-overlay{
-  display:none;
-  position:fixed;inset:0;
-  background:rgba(0,0,0,.6);
-  z-index:399;
-}
-.sidebar-overlay.show{display:block}
-
-.sidebar-close{
-  display:none;
-  position:absolute;top:16px;right:16px;
-  background:none;border:none;color:var(--text-2);font-size:20px;
-}
-@media(max-width:900px){.sidebar-close{display:block}}
-
-.main{flex:1;min-width:0;overflow-y:auto}
-
-/* ---- SIDEBAR NAV ---- */
-.sb-section{padding:10px 0}
-.sb-section+.sb-section{border-top:1px solid var(--border)}
-.sb-label{
-  font-size:9px;font-weight:700;letter-spacing:2px;
-  color:var(--text-3);text-transform:uppercase;
-  padding:6px 18px 4px;
-}
-.nav-item{
-  display:flex;align-items:center;gap:10px;
-  padding:10px 18px;
-  color:var(--text-2);font-size:13px;font-weight:500;
-  background:none;border:none;width:100%;text-align:left;
-  border-left:3px solid transparent;
-  transition:all .15s;position:relative;
-}
-.nav-item:hover{color:#fff;background:rgba(255,255,255,.03)}
-.nav-item.active{
-  color:#fff;
-  background:rgba(240,165,0,.07);
-  border-left-color:var(--gold);
-}
-.nav-icon{font-size:16px;width:20px;text-align:center}
-.nav-badge{
-  margin-left:auto;
-  background:var(--red);color:#fff;
-  font-family:var(--f-mono);font-size:9px;font-weight:600;
-  padding:2px 6px;border-radius:10px;
-}
-.nav-badge.green{background:var(--green);color:#000}
-.nav-badge.gold{background:var(--gold);color:#111}
-
-.sb-bottom{
-  margin-top:auto;
-  padding:14px;
-  border-top:1px solid var(--border);
-}
-.acc-widget{
-  background:var(--bg-2);
-  border:1px solid var(--border);
-  border-radius:var(--r);
-  padding:14px;
-}
-.acc-lbl{font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
-.acc-val{
-  font-family:var(--f-display);font-size:30px;
-  color:var(--green);letter-spacing:1px;
-}
-.acc-sub{font-size:11px;color:var(--text-2);margin-top:2px}
-.acc-track{height:3px;background:var(--border);border-radius:2px;margin-top:10px;overflow:hidden}
-.acc-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--green-lt));border-radius:2px}
-
-/* ---- PAGES ---- */
-.page{display:none}
-.page.active{display:block}
-
-.pg{padding:24px}
-@media(max-width:600px){.pg{padding:16px}}
-
-.pg-header{
-  display:flex;align-items:flex-start;justify-content:space-between;
-  margin-bottom:24px;flex-wrap:wrap;gap:12px;
-}
-.pg-title{
-  font-family:var(--f-display);
-  font-size:32px;letter-spacing:1px;
-}
-.pg-sub{font-size:12px;color:var(--text-2);margin-top:2px}
-.hdr-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-
-/* ---- BUTTONS ---- */
-.btn{
-  font-family:var(--f-body);font-size:12px;font-weight:600;
-  padding:8px 16px;border-radius:var(--r);border:none;
-  cursor:pointer;transition:all .15s;white-space:nowrap;
-  display:inline-flex;align-items:center;gap:6px;
-}
-.btn-gold{background:var(--gold);color:#111}
-.btn-gold:hover{background:var(--gold-lt);transform:translateY(-1px)}
-.btn-outline{
-  background:none;border:1px solid var(--border);color:var(--text-2);
-}
-.btn-outline:hover{border-color:var(--border-lt);color:#fff}
-.btn-ghost{background:rgba(255,255,255,.05);color:var(--text-2)}
-.btn-ghost:hover{background:rgba(255,255,255,.08);color:#fff}
-.btn-red{background:var(--red);color:#fff}
-.btn-red:hover{background:var(--red-dk)}
-.btn-green{background:var(--green);color:#000;font-weight:700}
-.btn-green:hover{background:var(--green-lt)}
-.btn-sm{padding:5px 12px;font-size:11px}
-.btn-icon{padding:8px;aspect-ratio:1}
-
-/* ---- CARDS ---- */
-.card{
-  background:var(--bg-card);
-  border:1px solid var(--border);
-  border-radius:var(--r-lg);
-}
-.card-hd{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:14px 18px;
-  border-bottom:1px solid var(--border);
-}
-.card-title{
-  font-size:12px;font-weight:700;
-  text-transform:uppercase;letter-spacing:1px;
-  color:var(--text-2);
-  display:flex;align-items:center;gap:8px;
-}
-.card-bd{padding:18px}
-
-/* ---- GRIDS ---- */
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-@media(max-width:900px){.g4{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr}}
-@media(max-width:600px){.g4,.g3,.g2{grid-template-columns:1fr}}
-
-/* ---- STAT CARDS ---- */
-.stat-card{
-  background:var(--bg-card);
-  border:1px solid var(--border);
-  border-radius:var(--r-lg);
-  padding:18px;
-  position:relative;overflow:hidden;
-  transition:border-color .2s,transform .15s;
-}
-.stat-card::before{
-  content:'';
-  position:absolute;top:0;left:0;right:0;height:2px;
-}
-.stat-card.gold::before{background:linear-gradient(90deg,var(--gold),transparent)}
-.stat-card.green::before{background:linear-gradient(90deg,var(--green),transparent)}
-.stat-card.red::before{background:linear-gradient(90deg,var(--red),transparent)}
-.stat-card.blue::before{background:linear-gradient(90deg,var(--blue),transparent)}
-.stat-card:hover{border-color:var(--border-lt);transform:translateY(-2px)}
-.sc-label{font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
-.sc-val{
-  font-family:var(--f-display);font-size:32px;
-  letter-spacing:1px;line-height:1;margin-bottom:6px;
-}
-.sc-sub{font-size:11px;color:var(--text-3);display:flex;align-items:center;gap:4px}
-.up{color:var(--green)}.dn{color:var(--red)}
-
-/* ---- FILTER BAR ---- */
-.filter-bar{
-  display:flex;align-items:center;gap:6px;
-  margin-bottom:16px;flex-wrap:wrap;
-}
-.fl{font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--text-3);text-transform:uppercase;margin-right:4px}
-.fb{
-  font-size:11px;font-weight:600;letter-spacing:.5px;
-  color:var(--text-2);
-  background:var(--bg-2);border:1px solid var(--border);
-  padding:6px 14px;border-radius:20px;
-  cursor:pointer;transition:all .15s;
-}
-.fb:hover{color:#fff;border-color:var(--border-lt)}
-.fb.active{background:var(--gold);color:#111;border-color:var(--gold);font-weight:700}
-.fs{flex:1}
-.sort-row{display:flex;align-items:center;gap:8px}
-.sort-lbl{font-size:11px;color:var(--text-3);white-space:nowrap}
-select.inp{
-  font-family:var(--f-body);font-size:12px;
-  color:var(--text-1);background:var(--bg-2);
-  border:1px solid var(--border);
-  padding:6px 10px;border-radius:var(--r);
-  cursor:pointer;outline:none;
-}
-select.inp:focus{border-color:var(--gold)}
-
-/* ---- MATCH TABLE ---- */
-.match-table-head{
-  display:grid;
-  grid-template-columns:1fr 190px 58px 58px 58px 80px;
-  padding:6px 16px;margin-bottom:6px;
-}
-.col-h{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-3)}
-.col-h.c{text-align:center}
-@media(max-width:768px){
-  .match-table-head{display:none}
-}
-
-.match-card{
-  background:var(--bg-card);
-  border:1px solid var(--border);
-  border-radius:var(--r-lg);
-  margin-bottom:6px;overflow:hidden;
-  transition:border-color .15s,transform .1s,box-shadow .15s;
-  animation:fadeUp .3s ease both;
-}
-@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.match-card:hover{border-color:var(--border-lt);transform:translateY(-1px);box-shadow:0 4px 20px rgba(0,0,0,.3)}
-.match-card.live-card{border-left:3px solid var(--red)}
-.match-card.value-card{border-left:3px solid var(--green)}
-
-.match-row{
-  display:grid;
-  grid-template-columns:1fr 190px 58px 58px 58px 80px;
-  align-items:center;padding:12px 16px;gap:0;
-}
-@media(max-width:768px){
-  .match-row{
-    grid-template-columns:1fr auto;
-    gap:12px;
-  }
-}
-
-.match-info{display:flex;align-items:center;gap:12px}
-.match-meta{display:flex;flex-direction:column;gap:1px;min-width:64px}
-.match-time{
-  font-family:var(--f-mono);font-size:12px;font-weight:600;
-  color:var(--gold);
-}
-.match-time.live{color:var(--red);animation:blink-text 1.5s ease-in-out infinite}
-@keyframes blink-text{0%,100%{opacity:1}50%{opacity:.5}}
-.match-comp{font-size:10px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:72px}
-.teams{flex:1;min-width:0}
-.team-r{display:flex;align-items:center;justify-content:space-between;padding:2px 0}
-.team-n{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px}
-.team-s{font-family:var(--f-display);font-size:18px;color:#fff;min-width:16px;text-align:right}
-
-.prob-col{display:flex;flex-direction:column;gap:5px;padding:0 6px}
-.prob-r{display:flex;align-items:center;gap:4px}
-.prob-l{font-size:9px;font-weight:700;color:var(--text-3);min-width:8px}
-.prob-track{flex:1;height:3px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden}
-.prob-fill{height:100%;border-radius:2px;transition:width 1s cubic-bezier(.4,0,.2,1)}
-.pf-h{background:var(--blue)}.pf-d{background:#3a4560}.pf-a{background:var(--red)}
-.prob-pct{
-  font-family:var(--f-mono);font-size:10px;font-weight:600;
-  min-width:26px;text-align:right;
-}
-.pct-h{color:var(--blue)}.pct-d{color:#4a5870}.pct-a{color:var(--red)}
-@media(max-width:768px){.prob-col{display:none}}
-
-.odds-cell{display:flex;justify-content:center}
-.odds-btn{
-  width:54px;padding:7px 2px;
-  background:var(--bg-2);border:1px solid var(--border);
-  border-radius:var(--r);text-align:center;
-  transition:all .15s;cursor:pointer;
-}
-.odds-btn:hover{background:var(--bg-hover);border-color:var(--gold)}
-.odds-btn.best{background:rgba(46,194,126,.08);border-color:rgba(46,194,126,.4)}
-.odds-btn.sel{background:var(--gold);border-color:var(--gold-dk)}
-.odds-btn.sel .o-num{color:#111}.odds-btn.sel .o-type{color:#555}
-.o-type{font-size:9px;font-weight:700;letter-spacing:.8px;color:var(--text-3);display:block;margin-bottom:1px}
-.o-num{font-family:var(--f-display);font-size:18px;color:var(--gold);display:block;letter-spacing:.5px}
-.odds-btn.best .o-num{color:var(--green)}
-@media(max-width:768px){
-  .odds-cell:nth-child(3),.odds-cell:nth-child(4),.odds-cell:nth-child(5){display:none}
-}
-
-.val-cell{display:flex;justify-content:center}
-.val-tag{
-  font-size:9px;font-weight:700;letter-spacing:.8px;
-  padding:4px 8px;border-radius:4px;text-transform:uppercase;
-  white-space:nowrap;
-}
-.vt-h{background:rgba(58,142,246,.12);color:var(--blue-lt);border:1px solid rgba(58,142,246,.3)}
-.vt-d{background:rgba(255,255,255,.04);color:var(--text-2);border:1px solid var(--border)}
-.vt-a{background:rgba(230,57,70,.12);color:#e87a8a;border:1px solid rgba(230,57,70,.3)}
-@media(max-width:768px){.val-cell{display:none}}
-
-/* betslip strip */
-.bs-strip{
-  background:var(--bg-2);
-  border-top:1px solid var(--border);
-  padding:8px 16px;
-  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-}
-.bs-lbl{font-size:9px;font-weight:700;letter-spacing:1px;color:var(--text-3);text-transform:uppercase}
-.bs-sel{font-size:12px;color:var(--text-2)}
-.bs-sel strong{color:var(--gold)}
-.bs-odds{font-family:var(--f-mono);font-size:13px;font-weight:600;color:var(--gold)}
-.bs-add{
-  margin-left:auto;
-  font-size:11px;font-weight:700;text-transform:uppercase;
-  background:var(--gold);color:#111;
-  border:none;padding:5px 14px;border-radius:var(--r);cursor:pointer;
-  transition:background .15s;
-}
-.bs-add:hover{background:var(--gold-lt)}
-
-/* ---- PREDICTION CARDS ---- */
-.pred-card{
-  background:var(--bg-card);
-  border:1px solid var(--border);
-  border-radius:var(--r-lg);
-  overflow:hidden;margin-bottom:10px;
-  animation:fadeUp .3s ease both;
-  transition:border-color .15s,box-shadow .15s;
-}
-.pred-card:hover{border-color:var(--border-lt);box-shadow:0 4px 20px rgba(0,0,0,.3)}
-.pc-hd{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:12px 18px;border-bottom:1px solid var(--border);
-}
-.comp-tag{
-  font-size:10px;font-weight:700;letter-spacing:.8px;
-  padding:3px 8px;border-radius:4px;text-transform:uppercase;
-  background:rgba(58,142,246,.1);color:var(--blue-lt);
-  border:1px solid rgba(58,142,246,.25);
-}
-.comp-tag.live{background:rgba(230,57,70,.1);color:#e87a8a;border-color:rgba(230,57,70,.3)}
-.conf-badge{
-  display:flex;align-items:center;gap:5px;
-  font-size:11px;font-weight:600;
-}
-.c-dot{width:7px;height:7px;border-radius:50%}
-.c-high .c-dot{background:var(--green)}.c-high{color:var(--green)}
-.c-med .c-dot{background:var(--gold)}.c-med{color:var(--gold)}
-.c-low .c-dot{background:var(--red)}.c-low{color:var(--red)}
-
-.pc-bd{padding:18px}
-.vs-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
-.vs-team{flex:1}
-.vs-team.away{text-align:right}
-.vt-name{font-size:15px;font-weight:700}
-.vt-form{display:flex;gap:3px;margin-top:5px}
-.vs-team.away .vt-form{justify-content:flex-end}
-.f-dot{
-  width:20px;height:20px;border-radius:50%;
-  font-family:var(--f-mono);font-size:9px;font-weight:600;
-  display:flex;align-items:center;justify-content:center;
-}
-.fw{background:var(--green);color:#000}
-.fd{background:#2a3450;color:var(--text-2)}
-.fl{background:var(--red-dk);color:#fff}
-.vs-mid{
-  text-align:center;padding:0 16px;
-}
-.vs-mid-time{font-size:12px;color:var(--text-3);margin-bottom:4px}
-.vs-mid-vs{
-  font-family:var(--f-display);font-size:20px;
-  color:var(--text-3);letter-spacing:1px;
-}
-
-.probs-row{
-  display:flex;border:1px solid var(--border);
-  border-radius:var(--r);overflow:hidden;margin-bottom:14px;
-}
-.prob-seg{
-  flex:1;text-align:center;padding:12px 6px;
-  transition:background .15s;cursor:pointer;
-}
-.prob-seg:hover{background:var(--bg-hover)}
-.prob-seg+.prob-seg{border-left:1px solid var(--border)}
-.ps-lbl{font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
-.ps-val{font-family:var(--f-display);font-size:22px;letter-spacing:.5px}
-.ps-odds{font-size:11px;color:var(--text-3);margin-top:1px;font-family:var(--f-mono)}
-.seg-h .ps-val{color:var(--blue)}
-.seg-d .ps-val{color:var(--text-2)}
-.seg-a .ps-val{color:var(--red)}
-.seg-best{
-  background:rgba(46,194,126,.06);
-  border-top:2px solid var(--green);
-}
-.seg-best .ps-lbl::after{content:' ✓ VALUE';color:var(--green);font-size:8px}
-
-.ai-row{
-  background:var(--bg-2);
-  border-radius:var(--r);padding:11px 14px;
-  font-size:12px;color:var(--text-2);line-height:1.5;
-}
-.ai-row strong{color:var(--text-1)}
-.ai-icon-lbl{color:var(--blue-lt);margin-right:4px}
-
-.pc-ft{
-  padding:12px 18px;
-  border-top:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;gap:10px;
-  flex-wrap:wrap;
-}
-.pc-stats{display:flex;gap:16px}
-.pc-stat{font-size:11px;color:var(--text-3)}
-.pc-stat strong{display:block;font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--text-2)}
-
-/* ---- BETSLIP PANEL ---- */
-.betslip-panel{
-  position:fixed;right:0;top:0;
-  width:300px;height:100vh;
-  background:var(--bg-1);
-  border-left:1px solid var(--border);
-  transform:translateX(100%);
-  transition:transform .3s ease;
-  z-index:500;display:flex;flex-direction:column;
-  box-shadow:-8px 0 32px rgba(0,0,0,.4);
-}
-.betslip-panel.open{transform:translateX(0)}
-@media(max-width:480px){.betslip-panel{width:100%}}
-
-.bp-hd{
-  padding:16px 18px;
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-  background:var(--bg-2);
-}
-.bp-title{font-family:var(--f-display);font-size:20px;letter-spacing:1px}
-.bp-cnt{
-  background:var(--gold);color:#111;
-  font-family:var(--f-mono);font-size:11px;font-weight:700;
-  padding:2px 8px;border-radius:10px;
-}
-.bp-close-btn{
-  background:none;border:none;color:var(--text-3);font-size:20px;cursor:pointer;
-}
-.bp-items{flex:1;overflow-y:auto;padding:14px}
-.bp-item{
-  background:var(--bg-2);border:1px solid var(--border);
-  border-radius:var(--r);padding:12px;margin-bottom:8px;
-  position:relative;
-}
-.bp-match{font-size:11px;color:var(--text-3);margin-bottom:3px}
-.bp-sel{font-size:13px;font-weight:600}
-.bp-odds{font-family:var(--f-display);font-size:22px;color:var(--gold);letter-spacing:.5px}
-.bp-rm{
-  position:absolute;top:8px;right:10px;
-  background:none;border:none;color:var(--text-3);font-size:16px;cursor:pointer;
-}
-.bp-rm:hover{color:var(--red)}
-.bp-empty{text-align:center;color:var(--text-3);padding:48px 20px}
-.bp-empty-ico{font-size:36px;margin-bottom:10px}
-
-.bp-ft{
-  padding:16px 18px;
-  border-top:1px solid var(--border);
-  background:var(--bg-2);
-}
-.bp-stake-row{display:flex;align-items:center;gap:8px;margin-bottom:14px}
-.bp-stake-lbl{font-size:12px;color:var(--text-2);flex-shrink:0}
-.bp-stake-inp{
-  flex:1;background:var(--bg-1);border:1px solid var(--border);
-  border-radius:var(--r);padding:7px 10px;
-  color:var(--text-1);font-family:var(--f-mono);font-size:14px;outline:none;
-}
-.bp-stake-inp:focus{border-color:var(--gold)}
-.bp-totals{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
-.bp-tot-row{display:flex;justify-content:space-between;font-size:12px;color:var(--text-2)}
-.bp-tot-row .val{font-family:var(--f-mono);font-weight:600;color:var(--gold)}
-.bp-place{
-  width:100%;
-  font-family:var(--f-display);font-size:16px;letter-spacing:1px;
-  background:var(--gold);color:#111;border:none;
-  padding:13px;border-radius:var(--r);cursor:pointer;
-  transition:all .2s;
-}
-.bp-place:hover{background:var(--gold-lt);box-shadow:var(--shadow-gold)}
-
-/* ---- NOTIFICATIONS PANEL ---- */
-.notif-panel{
-  position:fixed;right:0;top:0;
-  width:320px;height:100vh;
-  background:var(--bg-1);
-  border-left:1px solid var(--border);
-  transform:translateX(100%);
-  transition:transform .3s ease;
-  z-index:500;
-  overflow-y:auto;
-  box-shadow:-8px 0 32px rgba(0,0,0,.4);
-}
-.notif-panel.open{transform:translateX(0)}
-@media(max-width:480px){.notif-panel{width:100%}}
-.np-hd{
-  padding:16px 18px;
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-  background:var(--bg-2);
-  position:sticky;top:0;
-}
-.np-title{font-family:var(--f-display);font-size:20px;letter-spacing:1px}
-.np-close{background:none;border:none;color:var(--text-3);font-size:20px;cursor:pointer}
-.notif-item{
-  display:flex;gap:12px;padding:14px 18px;
-  border-bottom:1px solid var(--border);
-  transition:background .15s;
-}
-.notif-item:hover{background:var(--bg-2)}
-.notif-item.unread{border-left:3px solid var(--gold)}
-.ni-icon{font-size:22px;flex-shrink:0;margin-top:1px}
-.ni-body{flex:1}
-.ni-title{font-size:13px;font-weight:600;margin-bottom:2px}
-.ni-desc{font-size:11px;color:var(--text-2);line-height:1.4}
-.ni-time{font-size:10px;color:var(--text-3);margin-top:4px;font-family:var(--f-mono)}
-
-/* ---- PANEL OVERLAY ---- */
-.panel-overlay{
-  display:none;position:fixed;inset:0;
-  background:rgba(0,0,0,.5);z-index:499;
-}
-.panel-overlay.show{display:block}
-
-/* ---- USER DROPDOWN ---- */
-.user-dropdown{
-  position:absolute;top:52px;right:20px;
-  background:var(--bg-card);
-  border:1px solid var(--border);
-  border-radius:var(--r-lg);
-  min-width:200px;
-  box-shadow:var(--shadow);
-  z-index:350;
-  display:none;
-  overflow:hidden;
-}
-.user-dropdown.open{display:block}
-.ud-header{
-  padding:14px 16px;
-  border-bottom:1px solid var(--border);
-  background:var(--bg-2);
-}
-.ud-name{font-size:14px;font-weight:700}
-.ud-email{font-size:11px;color:var(--text-2)}
-.ud-plan{
-  display:inline-block;margin-top:5px;
-  font-size:9px;font-weight:700;letter-spacing:1px;
-  background:var(--gold);color:#111;
-  padding:2px 8px;border-radius:3px;text-transform:uppercase;
-}
-.ud-item{
-  display:flex;align-items:center;gap:10px;
-  padding:10px 16px;font-size:13px;color:var(--text-2);
-  background:none;border:none;width:100%;text-align:left;
-  transition:all .15s;cursor:pointer;
-}
-.ud-item:hover{background:var(--bg-hover);color:#fff}
-.ud-item.danger{color:var(--red)}
-.ud-item.danger:hover{background:rgba(230,57,70,.1)}
-.ud-sep{height:1px;background:var(--border)}
-
-/* ---- MOBILE BOTTOM NAV ---- */
-.mobile-nav{
-  display:none;
-  position:fixed;bottom:0;left:0;right:0;
-  background:var(--bg-1);
-  border-top:1px solid var(--border);
-  padding:6px 0 env(safe-area-inset-bottom,6px);
-  z-index:300;
-}
-@media(max-width:900px){.mobile-nav{display:flex}}
-.mn-item{
-  flex:1;display:flex;flex-direction:column;align-items:center;
-  gap:2px;padding:6px 4px;
-  background:none;border:none;color:var(--text-3);
-  font-size:9px;font-weight:600;letter-spacing:.5px;
-  text-transform:uppercase;cursor:pointer;
-  transition:color .15s;position:relative;
-}
-.mn-item.active{color:var(--gold)}
-.mn-icon{font-size:20px;line-height:1}
-.mn-dot{
-  position:absolute;top:4px;right:calc(50% - 16px);
-  width:6px;height:6px;background:var(--red);
-  border-radius:50%;border:1.5px solid var(--bg-1);
-  display:none;
-}
-.mn-dot.show{display:block}
-
-@media(max-width:900px){
-  .main{padding-bottom:70px}
-}
-
-/* ---- INSIGHT GRID ---- */
-.insight-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
-@media(max-width:700px){.insight-grid{grid-template-columns:1fr}}
-.insight-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden}
-.ic-hd{
-  background:rgba(58,142,246,.07);
-  border-bottom:1px solid var(--border);
-  padding:12px 16px;
-  display:flex;align-items:center;gap:10px;
-}
-.ic-hd-icon{font-size:20px}
-.ic-hd-title{font-size:13px;font-weight:700;letter-spacing:.5px}
-.ic-bd{padding:14px 16px}
-.ic-row{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:7px 0;border-bottom:1px solid var(--border);
-}
-.ic-row:last-child{border-bottom:none}
-.ic-name{font-size:12px;color:var(--text-2)}
-.ic-val{font-family:var(--f-mono);font-size:13px;font-weight:600}
-.tr-up{color:var(--green)}.tr-dn{color:var(--red)}.tr-fl{color:var(--text-2)}
-
-/* ---- MODEL CARD ---- */
-.model-card{
-  background:var(--bg-card);border:1px solid var(--border);
-  border-radius:var(--r-lg);padding:16px;margin-bottom:12px;
-}
-.mc-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.mc-name{font-family:var(--f-display);font-size:18px;letter-spacing:.5px}
-.mc-ver{
-  font-size:10px;color:var(--text-3);
-  background:var(--bg-2);border:1px solid var(--border);
-  padding:2px 8px;border-radius:10px;font-family:var(--f-mono);
-}
-.mc-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:8px}
-.mc-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--green),var(--green-lt))}
-.mc-stats{display:flex;gap:16px;flex-wrap:wrap}
-.ms{font-size:11px;color:var(--text-3)}
-.ms strong{display:block;font-family:var(--f-mono);font-size:13px;font-weight:600;color:var(--text-1)}
-
-/* ---- HEATMAP ---- */
-.heatmap{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
-.hm-cell{
-  aspect-ratio:1;border-radius:3px;
-  display:flex;align-items:center;justify-content:center;
-  font-family:var(--f-mono);font-size:8px;font-weight:600;
-  cursor:default;transition:transform .1s;
-}
-.hm-cell:hover{transform:scale(1.15)}
-.hm-0{background:#0f1520;color:var(--text-3)}
-.hm-1{background:#0f2a1a;color:#2a6040}
-.hm-2{background:#0f3a20;color:#3a7850}
-.hm-3{background:#155228;color:#5a9870}
-.hm-4{background:#1e7a3a;color:#8ad0a8}
-.hm-5{background:#28a84e;color:#fff}
-
-/* ---- LEADERBOARD ---- */
-.lb-hd,.lb-row{
-  display:grid;
-  grid-template-columns:44px 1fr 70px 80px 90px 80px;
-  align-items:center;padding:8px 14px;gap:0;
-}
-.lb-hd{
-  background:var(--bg-2);
-  border:1px solid var(--border);
-  border-radius:var(--r-lg) var(--r-lg) 0 0;
-}
-.lb-hd span{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-3)}
-.lb-hd span:not(:first-child){text-align:center}
-.lb-row{
-  border:1px solid var(--border);border-top:none;
-  background:var(--bg-card);transition:background .15s;
-}
-.lb-row:last-child{border-radius:0 0 var(--r-lg) var(--r-lg)}
-.lb-row:hover{background:var(--bg-hover)}
-.lb-rank{
-  font-family:var(--f-display);font-size:18px;
-  color:var(--text-3);text-align:center;letter-spacing:.5px;
-}
-.lb-rank.r1{color:#ffd700}.lb-rank.r2{color:#c0c0c0}.lb-rank.r3{color:#cd7f32}
-.lb-user{display:flex;align-items:center;gap:10px}
-.lb-av{
-  width:30px;height:30px;border-radius:50%;
-  font-family:var(--f-display);font-size:12px;
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;
-}
-.lb-name{font-size:13px;font-weight:600}
-.lb-tag{font-size:10px;color:var(--text-3)}
-.lb-cell{font-family:var(--f-mono);font-size:13px;font-weight:600;text-align:center}
-.lb-cell.profit{color:var(--green)}.lb-cell.loss{color:var(--red)}
-.lb-cell.acc{color:var(--gold)}
-.roi-pill{
-  font-size:10px;font-weight:600;
-  padding:2px 7px;border-radius:4px;
-  display:inline-block;text-align:center;
-  font-family:var(--f-mono);
-}
-.roi-pos{background:rgba(46,194,126,.12);color:var(--green);border:1px solid rgba(46,194,126,.3)}
-.roi-neg{background:rgba(230,57,70,.12);color:#e87a8a;border:1px solid rgba(230,57,70,.3)}
-@media(max-width:600px){
-  .lb-hd,.lb-row{grid-template-columns:36px 1fr 70px 80px}
-  .lb-cell:nth-child(5),.lb-cell:nth-child(6){display:none}
-  .lb-hd span:nth-child(5),.lb-hd span:nth-child(6){display:none}
-}
-
-/* ---- HISTORY ---- */
-.hist-row{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:12px 18px;border-bottom:1px solid var(--border);
-  gap:12px;transition:background .15s;
-}
-.hist-row:hover{background:var(--bg-hover)}
-.hr-main{flex:1;min-width:0}
-.hr-match{font-size:13px;font-weight:600}
-.hr-sel{font-size:11px;color:var(--text-2);margin-top:2px}
-.hr-odds{
-  font-family:var(--f-display);font-size:20px;
-  color:var(--gold);letter-spacing:.5px;text-align:center;
-}
-.hr-stake{font-size:10px;color:var(--text-3);font-family:var(--f-mono);text-align:center}
-.hr-result{text-align:right}
-.result-pill{
-  font-family:var(--f-mono);font-size:11px;font-weight:700;
-  padding:3px 10px;border-radius:4px;display:inline-block;
-}
-.rp-won{background:rgba(46,194,126,.12);color:var(--green);border:1px solid rgba(46,194,126,.3)}
-.rp-lost{background:rgba(230,57,70,.12);color:#e87a8a;border:1px solid rgba(230,57,70,.3)}
-.rp-pending{background:rgba(240,165,0,.1);color:var(--gold);border:1px solid rgba(240,165,0,.2)}
-.hr-profit{font-size:12px;font-weight:700;margin-top:3px}
-
-/* ---- SETTINGS ---- */
-.settings-block{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);margin-bottom:16px}
-.sb-hd{
-  padding:14px 18px;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;gap:10px;
-}
-.sb-hd-icon{font-size:16px}
-.sb-hd-title{font-size:13px;font-weight:700;letter-spacing:.5px}
-.set-row{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:14px 18px;border-bottom:1px solid var(--border);
-}
-.set-row:last-child{border-bottom:none}
-.set-info{flex:1}
-.set-name{font-size:13px;font-weight:600;margin-bottom:2px}
-.set-desc{font-size:11px;color:var(--text-3)}
-.toggle{position:relative;width:40px;height:22px;flex-shrink:0}
-.toggle input{opacity:0;width:0;height:0;position:absolute}
-.tgl-slider{
-  position:absolute;inset:0;
-  background:var(--border);border-radius:11px;
-  cursor:pointer;transition:background .2s;
-}
-.tgl-slider::before{
-  content:'';position:absolute;
-  width:16px;height:16px;left:3px;top:3px;
-  background:#fff;border-radius:50%;transition:transform .2s;
-}
-.toggle input:checked+.tgl-slider{background:var(--gold)}
-.toggle input:checked+.tgl-slider::before{transform:translateX(18px)}
-.set-select{
-  background:var(--bg-2);border:1px solid var(--border);
-  color:var(--text-1);padding:6px 10px;border-radius:var(--r);font-size:12px;
-}
-.plan-pill{
-  font-size:10px;font-weight:700;letter-spacing:.5px;
-  padding:3px 10px;border-radius:4px;text-transform:uppercase;
-}
-.plan-free{background:var(--border);color:var(--text-2)}
-.plan-pro{background:var(--gold);color:#111}
-.plan-premium{background:linear-gradient(135deg,#6a3fc8,#a67fe8);color:#fff}
-
-/* upgrade banner */
-.upgrade-banner{
-  background:linear-gradient(135deg,rgba(58,142,246,.08),rgba(106,63,200,.08));
-  border:1px solid rgba(106,63,200,.3);
-  border-radius:var(--r-lg);
-  padding:24px;margin-top:16px;
-  display:flex;align-items:center;gap:24px;
-}
-@media(max-width:600px){.upgrade-banner{flex-direction:column;text-align:center}}
-.ub-icon{font-size:48px;flex-shrink:0}
-.ub-title{font-family:var(--f-display);font-size:22px;letter-spacing:.5px;margin-bottom:4px}
-.ub-desc{font-size:12px;color:var(--text-2);line-height:1.5;margin-bottom:12px}
-.ub-features{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
-.ub-feat{
-  font-size:10px;color:#b09af0;
-  background:rgba(106,63,200,.1);border:1px solid rgba(106,63,200,.25);
-  padding:3px 8px;border-radius:4px;
-}
-.btn-purple{background:linear-gradient(135deg,#6a3fc8,#9060e0);color:#fff;border:none}
-.btn-purple:hover{opacity:.9;transform:translateY(-1px)}
-
-/* ---- BAR CHARTS ---- */
-.bar-chart{display:flex;align-items:flex-end;gap:4px;height:80px}
-.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;height:100%;justify-content:flex-end}
-.bar-fill{width:100%;border-radius:2px 2px 0 0;transition:height .8s ease;min-height:2px}
-.bar-lbl{font-size:9px;color:var(--text-3);font-family:var(--f-mono)}
-
-/* ---- MINI DONUT ---- */
-.donut-wrap{width:80px;height:80px;position:relative;margin:0 auto}
-.donut-svg{transform:rotate(-90deg)}
-.donut-track{fill:none;stroke:var(--border);stroke-width:8}
-.donut-seg{fill:none;stroke-width:8;stroke-linecap:round}
-.donut-lbl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text-2)}
-
-/* ---- LEAGUE ROWS ---- */
-.league-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
-.league-row:last-child{border-bottom:none}
-.lf{font-size:18px;width:24px;text-align:center}
-.ln{flex:1;font-size:13px;font-weight:500}
-.la{font-family:var(--f-mono);font-size:13px;font-weight:600;color:var(--green)}
-.lb-bar{flex:0 0 80px;height:3px;background:var(--border);border-radius:2px;overflow:hidden}
-.lb-bar-fill{height:100%;background:var(--green);border-radius:2px}
-
-/* ---- TOAST ---- */
-.toast{
-  position:fixed;bottom:24px;left:50%;
-  transform:translateX(-50%) translateY(10px);
-  background:var(--bg-card);border:1px solid var(--border);
-  color:var(--text-1);
-  font-size:13px;font-weight:600;font-family:var(--f-mono);
-  padding:10px 22px;border-radius:var(--r);
-  opacity:0;transition:all .25s ease;
-  pointer-events:none;z-index:999;white-space:nowrap;
-}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.toast.goal{border-color:var(--gold);color:var(--gold)}
-.toast.success{border-color:var(--green);color:var(--green)}
-.toast.info{border-color:var(--blue);color:var(--blue-lt)}
-.toast.error{border-color:var(--red);color:var(--red)}
-@media(max-width:900px){.toast{bottom:80px}}
-
-/* ---- LOADING ---- */
-.spinner{
-  width:28px;height:28px;
-  border:3px solid var(--border);border-top-color:var(--gold);
-  border-radius:50%;animation:spin .7s linear infinite;
-  margin:0 auto 10px;
-}
-@keyframes spin{to{transform:rotate(360deg)}}
-.loading-st{text-align:center;padding:48px 20px;color:var(--text-3)}
-.empty-st{text-align:center;padding:48px 20px;color:var(--text-3)}
-.empty-ico{font-size:32px;margin-bottom:8px}
-
-/* ---- MISC ---- */
-.sep{height:1px;background:var(--border);margin:16px 0}
-.badge{
-  font-size:9px;font-weight:700;letter-spacing:.8px;
-  padding:2px 7px;border-radius:3px;text-transform:uppercase;
-  display:inline-block;
-}
-.badge-gold{background:rgba(240,165,0,.15);color:var(--gold-lt);border:1px solid rgba(240,165,0,.3)}
-.badge-green{background:rgba(46,194,126,.12);color:var(--green);border:1px solid rgba(46,194,126,.25)}
-.badge-red{background:rgba(230,57,70,.12);color:#e87a8a;border:1px solid rgba(230,57,70,.25)}
-.badge-blue{background:rgba(58,142,246,.1);color:var(--blue-lt);border:1px solid rgba(58,142,246,.25)}
-
-/* featured match */
-.feat-scores{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:20px 0;
-}
-.feat-team{flex:1;text-align:center}
-.feat-name{font-size:16px;font-weight:700;margin-bottom:8px}
-.feat-score{font-family:var(--f-display);font-size:56px;letter-spacing:2px;line-height:1}
-.feat-vs{
-  font-family:var(--f-display);font-size:18px;
-  color:var(--text-3);letter-spacing:2px;
-  padding:0 16px;
-}
-
-/* search overlay */
-.search-overlay{
-  display:none;position:fixed;inset:0;
-  background:rgba(0,0,0,.7);z-index:600;
-  padding:80px 20px 20px;
-}
-.search-overlay.show{display:block}
-.search-box{
-  max-width:560px;margin:0 auto;
-  background:var(--bg-card);
-  border:1px solid var(--border);
-  border-radius:var(--r-lg);
-  overflow:hidden;
-  box-shadow:var(--shadow);
-}
-.search-inp-wrap{
-  display:flex;align-items:center;gap:10px;
-  padding:14px 18px;border-bottom:1px solid var(--border);
-}
-.search-inp-wrap input{
-  flex:1;background:none;border:none;outline:none;
-  color:var(--text-1);font-size:16px;
-}
-.search-inp-wrap input::placeholder{color:var(--text-3)}
-.search-result{
-  padding:10px 16px;font-size:13px;
-  color:var(--text-2);border-bottom:1px solid var(--border);
-  cursor:pointer;transition:background .15s;
-}
-.search-result:hover{background:var(--bg-hover);color:#fff}
-.search-empty{padding:24px;text-align:center;color:var(--text-3);font-size:13px}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div class="app">
 
-<!-- ============================================================
-     AUTH SCREEN
-============================================================ -->
-<div id="auth-screen">
-  <div class="auth-bg"></div>
-  <div class="auth-bg-grid"></div>
+<!-- SIDEBAR OVERLAY (mobile) -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
 
-  <!-- Left branding panel -->
-  <div class="auth-left">
-    <div class="auth-brand">Sport<span>AI</span></div>
-    <div class="auth-tagline">Professional AI-Powered Match Predictions</div>
+<!-- USER DROPDOWN -->
+<div class="user-dropdown" id="user-dropdown">
+  <div class="ud-header">
+    <div class="ud-name" id="ud-name">John Smithson</div>
+    <div class="ud-email" id="ud-email">john@sportai.com</div>
+    <div class="ud-plan">PRO</div>
+  </div>
+  <button class="ud-item" onclick="navigateTo('settings');closeDropdown()">⚙️ Account Settings</button>
+  <button class="ud-item" onclick="navigateTo('settings');closeDropdown()">💳 Subscription</button>
+  <button class="ud-item" onclick="navigateTo('history');closeDropdown()">📜 Prediction History</button>
+  <div class="ud-divider"></div>
+  <button class="ud-item ud-logout" onclick="logout()">🚪 Sign Out</button>
+</div>
 
-    <div class="auth-feature-list">
-      <div class="auth-feature">
-        <div class="af-icon">🤖</div>
-        <div>
-          <div class="af-title">XGBoost AI Engine</div>
-          <div class="af-desc">DeepMatch v3.2 analyses 1,200+ data points per match delivering 94.2% prediction accuracy across 47 leagues.</div>
-        </div>
-      </div>
-      <div class="auth-feature">
-        <div class="af-icon">💰</div>
-        <div>
-          <div class="af-title">Value Bet Detection</div>
-          <div class="af-desc">Expected-value algorithm identifies bookmaker mispricing and Kelly Criterion calculates optimal stake sizes.</div>
-        </div>
-      </div>
-      <div class="auth-feature">
-        <div class="af-icon">📡</div>
-        <div>
-          <div class="af-title">Real-Time Live Data</div>
-          <div class="af-desc">In-play probability updates under 5 seconds. Live odds from 12 bookmakers refreshed every 10 minutes.</div>
-        </div>
-      </div>
+<!-- TOP NAV -->
+<header class="top-nav">
+  <button class="hamburger-btn" id="hamburger-btn" onclick="toggleSidebar()">☰</button>
+  <div class="logo">Sport<span>AI</span></div>
+  <div class="nav-spacer"></div>
+  <div class="nav-search">
+    <span style="color:var(--text-3);font-size:13px">🔍</span>
+    <input type="text" placeholder="Search teams, leagues..." id="global-search" oninput="handleSearch(this.value)">
+  </div>
+  <div class="live-pill">● LIVE</div>
+  <button class="nav-icon-btn" id="notif-btn" title="Notifications" onclick="toggleNotif()">
+    🔔<span class="notif-dot" id="notif-dot"></span>
+  </button>
+  <button class="nav-icon-btn" id="betslip-toggle" title="Betslip" onclick="toggleBetslip()">
+    🎫<span id="bs-count-badge" style="position:absolute;top:2px;right:2px;background:var(--red);color:#fff;font-family:var(--f-cond);font-size:9px;font-weight:800;padding:1px 4px;border-radius:8px;display:none">0</span>
+  </button>
+  <button class="user-avatar" id="user-btn" onclick="toggleDropdown()">JS</button>
+</header>
+
+<!-- STATS TICKER -->
+<div class="stats-ticker">
+  <div class="ticker-item"><span class="ticker-val" id="t-total">—</span><span class="ticker-lbl">Matches</span></div>
+  <div class="ticker-div"></div>
+  <div class="ticker-item"><span class="ticker-val red" id="t-live">—</span><span class="ticker-lbl">Live</span></div>
+  <div class="ticker-div"></div>
+  <div class="ticker-item"><span class="ticker-val green" id="t-value">—</span><span class="ticker-lbl">Value Bets</span></div>
+  <div class="ticker-div"></div>
+  <div class="ticker-item"><span class="ticker-val">94.2%</span><span class="ticker-lbl">AI Accuracy</span></div>
+  <div class="ticker-div"></div>
+  <div class="ticker-item"><span class="ticker-val">+1,284</span><span class="ticker-lbl">Predictions Today</span></div>
+  <div class="ticker-div"></div>
+  <div class="ticker-item"><span class="ticker-val green">73.1%</span><span class="ticker-lbl">Win Rate (7d)</span></div>
+  <div class="ticker-div"></div>
+  <div class="ticker-item"><span class="ticker-val" id="t-updated" style="color:var(--text-3);font-size:11px">Loading…</span><span class="ticker-lbl">Updated</span></div>
+</div>
+
+<div class="app-body">
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Main</div>
+    <button class="nav-item active" data-page="dashboard"><span class="nav-icon">🏠</span>Dashboard</button>
+    <button class="nav-item" data-page="predictions"><span class="nav-icon">🎯</span>Predictions<span class="nav-badge green" id="val-badge">0</span></button>
+    <button class="nav-item" data-page="insights"><span class="nav-icon">🤖</span>AI Insights</button>
+    <button class="nav-item" data-page="live"><span class="nav-icon">📡</span>Live Centre<span class="nav-badge" id="live-badge">0</span></button>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Analysis</div>
+    <button class="nav-item" data-page="statistics"><span class="nav-icon">📊</span>Statistics</button>
+    <button class="nav-item" data-page="leaderboard"><span class="nav-icon">🏆</span>Leaderboard</button>
+    <button class="nav-item" data-page="history"><span class="nav-icon">📜</span>History</button>
+    <button class="nav-item" data-page="calculator"><span class="nav-icon">🧮</span>Bet Calculator</button>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Account</div>
+    <button class="nav-item" data-page="settings"><span class="nav-icon">⚙️</span>Settings</button>
+    <button class="nav-item" data-page="settings"><span class="nav-icon">💳</span>Subscription</button>
+  </div>
+  <div class="sidebar-bottom">
+    <div class="accuracy-widget">
+      <div class="acc-title">AI Accuracy (30d)</div>
+      <div class="acc-value">94.2%</div>
+      <div class="acc-sub">↑ +1.4% vs last month</div>
+      <div class="acc-bar"><div class="acc-fill"></div></div>
     </div>
+  </div>
+</aside>
 
-    <div class="auth-stats-row">
-      <div class="auth-stat"><span class="auth-stat-val">94.2%</span><span class="auth-stat-lbl">Accuracy</span></div>
-      <div class="auth-stat"><span class="auth-stat-val">47</span><span class="auth-stat-lbl">Leagues</span></div>
-      <div class="auth-stat"><span class="auth-stat-val">+18.4%</span><span class="auth-stat-lbl">30d ROI</span></div>
-      <div class="auth-stat"><span class="auth-stat-val">12K+</span><span class="auth-stat-lbl">Members</span></div>
+<!-- MAIN CONTENT -->
+<main style="flex:1;min-width:0;overflow-y:auto;display:flex;flex-direction:column;">
+
+<!-- ========================= DASHBOARD PAGE ========================= -->
+<div class="page active" id="page-dashboard">
+<div style="padding:20px">
+
+  <div class="page-header">
+    <div>
+      <div class="page-title">Dashboard</div>
+      <div class="page-subtitle" id="dash-greeting">Welcome back. Here's today's overview.</div>
+    </div>
+    <div class="header-actions">
+      <select id="dash-sport">
+        <option>⚽ Football</option>
+        <option>🏀 Basketball</option>
+        <option>🎾 Tennis</option>
+        <option>🏈 NFL</option>
+      </select>
+      <button class="btn btn-gold" onclick="navigateTo('predictions')">View All Predictions →</button>
     </div>
   </div>
 
-  <!-- Right form panel -->
-  <div class="auth-right">
-    <div class="auth-card">
-      <div class="auth-mobile-logo">Sport<span>AI</span></div>
+  <div class="grid-4" style="margin-bottom:20px">
+    <div class="stat-card">
+      <div class="stat-card-label">Today's Predictions</div>
+      <div class="stat-card-value" style="color:var(--gold)">47</div>
+      <div class="stat-card-sub"><span class="delta-up">↑ 12</span> vs yesterday</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-label">Live Matches</div>
+      <div class="stat-card-value" style="color:var(--red)" id="dash-live">—</div>
+      <div class="stat-card-sub"><span style="color:var(--red)">● Active now</span></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-label">Value Bets Found</div>
+      <div class="stat-card-value" style="color:var(--green-lt)" id="dash-value">—</div>
+      <div class="stat-card-sub"><span class="delta-up">↑ 3</span> high confidence</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-label">Portfolio ROI</div>
+      <div class="stat-card-value" style="color:var(--green-lt)">+18.4%</div>
+      <div class="stat-card-sub"><span class="delta-up">↑ 2.1%</span> this week</div>
+    </div>
+  </div>
 
-      <div class="auth-tabs">
-        <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Sign In</button>
-        <button class="auth-tab" id="tab-signup" onclick="switchTab('signup')">Create Account</button>
+  <div style="display:grid;grid-template-columns:1fr 320px;gap:16px;margin-bottom:20px" class="featured-grid">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">⭐ Featured Match</span>
+        <span class="comp-badge live">LIVE 73'</span>
       </div>
-
-      <!-- LOGIN FORM -->
-      <div id="form-login">
-        <div class="auth-form-title">Welcome Back</div>
-        <div class="auth-form-sub">Sign in to access your predictions dashboard</div>
-
-        <div class="form-group">
-          <label class="form-label">Email or Username</label>
-          <div class="input-icon-wrap">
-            <span class="input-icon">👤</span>
-            <input type="text" class="form-input" id="login-user" placeholder="john@example.com" autocomplete="username">
+      <div class="card-body">
+        <div class="vs-row">
+          <div class="vs-team">
+            <div class="vst-name" style="font-size:18px">Manchester City</div>
+            <div style="font-size:28px;font-family:var(--f-cond);font-weight:800;color:#fff;margin:4px 0">2</div>
+            <div class="vst-form">
+              <div class="form-dot fw">W</div><div class="form-dot fw">W</div>
+              <div class="form-dot fd">D</div><div class="form-dot fw">W</div>
+              <div class="form-dot fw">W</div>
+            </div>
+          </div>
+          <div style="text-align:center;padding:0 20px">
+            <div style="font-family:var(--f-cond);font-size:13px;color:var(--text-3);margin-bottom:6px">Premier League</div>
+            <div style="font-family:var(--f-cond);font-size:14px;font-weight:700;color:var(--text-2)">VS</div>
+            <div style="font-size:11px;color:var(--text-3);margin-top:6px">Etihad Stadium</div>
+          </div>
+          <div class="vs-team away">
+            <div class="vst-name" style="font-size:18px">Arsenal</div>
+            <div style="font-size:28px;font-family:var(--f-cond);font-weight:800;color:#fff;margin:4px 0">1</div>
+            <div class="vst-form" style="justify-content:flex-end">
+              <div class="form-dot fw">W</div><div class="form-dot fl">L</div>
+              <div class="form-dot fw">W</div><div class="form-dot fw">W</div>
+              <div class="form-dot fd">D</div>
+            </div>
           </div>
         </div>
-
-        <div class="form-group">
-          <label class="form-label">Password</label>
-          <div class="input-icon-wrap">
-            <span class="input-icon">🔒</span>
-            <input type="password" class="form-input" id="login-pass" placeholder="••••••••" autocomplete="current-password">
-            <button class="input-toggle" onclick="togglePw('login-pass',this)" type="button">👁</button>
+        <div class="pc-probs">
+          <div class="pc-prob-seg seg-home seg-best" onclick="addToBetslip('Man City vs Arsenal','Home Win','1.72')">
+            <div class="pps-lbl">Home Win</div>
+            <div class="pps-val">58%</div>
+            <div class="pps-odds">1.72</div>
           </div>
-          <div class="form-error" id="login-err">Invalid credentials. Please try again.</div>
+          <div class="pc-prob-seg seg-draw" onclick="addToBetslip('Man City vs Arsenal','Draw','3.50')">
+            <div class="pps-lbl">Draw</div>
+            <div class="pps-val">22%</div>
+            <div class="pps-odds">3.50</div>
+          </div>
+          <div class="pc-prob-seg seg-away" onclick="addToBetslip('Man City vs Arsenal','Away Win','4.80')">
+            <div class="pps-lbl">Away Win</div>
+            <div class="pps-val">20%</div>
+            <div class="pps-odds">4.80</div>
+          </div>
         </div>
+        <div class="ai-insight-row"><span class="ai-icon">🤖</span><strong>AI Insight:</strong> Man City dominates with 68% possession and 7 shots on target. Strong home form (W5 D0 L1). Value in Home Win at 1.72.</div>
+      </div>
+    </div>
 
-        <div style="display:flex;justify-content:flex-end;margin-bottom:20px">
-          <a href="#" style="font-size:12px;color:var(--gold)">Forgot password?</a>
-        </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">🎯 Top Value Bets</span>
+        <button class="btn btn-outline" style="font-size:10px;padding:4px 10px" onclick="navigateTo('predictions')">See All</button>
+      </div>
+      <div style="padding:8px 0" id="top-value-list">
+        <div class="loading-state" style="padding:20px"><div class="spinner"></div></div>
+      </div>
+    </div>
+  </div>
 
-        <button class="btn-primary" id="login-btn" onclick="handleLogin()">
-          <span id="login-btn-text">Sign In</span>
-          <div class="btn-loading" id="login-loading"></div>
-        </button>
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-header">
+      <span class="card-title">📡 Live &amp; Upcoming Matches</span>
+      <div style="display:flex;gap:6px">
+        <button class="filter-btn active" data-df="all" style="font-size:11px;padding:4px 10px">All</button>
+        <button class="filter-btn" data-df="live" style="font-size:11px;padding:4px 10px">Live</button>
+        <button class="filter-btn" data-df="upcoming" style="font-size:11px;padding:4px 10px">Upcoming</button>
+      </div>
+    </div>
+    <div style="padding:10px">
+      <div class="table-head">
+        <div class="col-lbl">Match</div>
+        <div class="col-lbl">AI Probabilities</div>
+        <div class="col-lbl center">1</div>
+        <div class="col-lbl center">X</div>
+        <div class="col-lbl center">2</div>
+        <div class="col-lbl center">Value</div>
+      </div>
+      <div id="dash-matches"><div class="loading-state"><div class="spinner"></div><p>Loading matches…</p></div></div>
+    </div>
+  </div>
 
-        <div class="auth-footer">
-          Don't have an account? <a href="#" onclick="switchTab('signup')">Create one →</a><br>
-          <span style="font-size:10px;margin-top:8px;display:block">Demo: username <strong style="color:var(--gold)">john</strong> / password <strong style="color:var(--gold)">password123</strong></span>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><span class="card-title">📈 AI Performance (7 Days)</span></div>
+      <div class="card-body">
+        <div class="mini-bar-chart" id="perf-chart"></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-3);margin-top:6px">
+          <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
         </div>
       </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">🌍 Top Leagues Today</span></div>
+      <div class="card-body" style="padding:8px 16px">
+        <div class="league-row"><span class="league-flag">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span><span class="league-name">Premier League</span><div class="league-bar"><div class="league-bar-fill" style="width:96%"></div></div><span class="league-acc">96.1%</span></div>
+        <div class="league-row"><span class="league-flag">🇪🇸</span><span class="league-name">La Liga</span><div class="league-bar"><div class="league-bar-fill" style="width:93%"></div></div><span class="league-acc">93.4%</span></div>
+        <div class="league-row"><span class="league-flag">🇩🇪</span><span class="league-name">Bundesliga</span><div class="league-bar"><div class="league-bar-fill" style="width:91%"></div></div><span class="league-acc">91.7%</span></div>
+        <div class="league-row"><span class="league-flag">🇮🇹</span><span class="league-name">Serie A</span><div class="league-bar"><div class="league-bar-fill" style="width:90%"></div></div><span class="league-acc">90.2%</span></div>
+        <div class="league-row"><span class="league-flag">🇫🇷</span><span class="league-name">Ligue 1</span><div class="league-bar"><div class="league-bar-fill" style="width:88%"></div></div><span class="league-acc">88.9%</span></div>
+      </div>
+    </div>
+  </div>
 
-      <!-- SIGNUP FORM -->
-      <div id="form-signup" style="display:none">
-        <div class="auth-form-title">Get Access</div>
-        <div class="auth-form-sub">A valid promo code is required to create your account</div>
+</div>
+</div>
 
-        <!-- PROMO CODE — required first -->
-        <div class="promo-wrap">
-          <div class="promo-header">
-            <span class="promo-badge">Required</span>
-            <span class="promo-title">Access Code</span>
-          </div>
-          <div class="promo-desc">Enter the promo code from your purchase confirmation email to unlock your account.</div>
-          <div class="promo-input-row">
-            <input type="text" class="form-input" id="promo-code" placeholder="SPORT-XXXX-XXXX" maxlength="20" oninput="this.value=this.value.toUpperCase()">
-            <button class="promo-verify-btn" id="promo-btn" onclick="verifyPromo()">Verify</button>
-          </div>
-          <div class="promo-status valid" id="promo-valid">✓ Code verified — <span id="promo-plan-name">Pro Plan</span> unlocked</div>
-          <div class="promo-status invalid" id="promo-invalid">✗ Invalid or expired code</div>
+<!-- ========================= PREDICTIONS PAGE ========================= -->
+<div class="page" id="page-predictions">
+<div style="padding:20px">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Predictions</div>
+      <div class="page-subtitle">AI-powered match outcome probabilities with expected value analysis</div>
+    </div>
+    <div class="header-actions">
+      <select id="pred-sport"><option>⚽ Football</option><option>🏀 Basketball</option><option>🎾 Tennis</option></select>
+      <select id="pred-conf">
+        <option value="">All Confidence</option>
+        <option value="high">High (&gt;80%)</option>
+        <option value="med">Medium (60-80%)</option>
+        <option value="low">Low (&lt;60%)</option>
+      </select>
+    </div>
+  </div>
+  <div class="filter-bar">
+    <div class="filter-lbl">Filter</div>
+    <button class="filter-btn active" data-pf="all">All Matches</button>
+    <button class="filter-btn" data-pf="live">Live</button>
+    <button class="filter-btn" data-pf="value">Value Only</button>
+    <button class="filter-btn" data-pf="upcoming">Upcoming</button>
+    <div class="filter-spacer"></div>
+    <div class="sort-wrap">
+      <span class="sort-lbl">Sort:</span>
+      <select id="pred-sort"><option value="default">Default</option><option value="conf">Confidence</option><option value="ev">Expected Value</option><option value="time">Kick-off</option></select>
+    </div>
+  </div>
+  <div id="pred-container"><div class="loading-state"><div class="spinner"></div><p>Loading predictions…</p></div></div>
+</div>
+</div>
+
+<!-- ========================= AI INSIGHTS PAGE ========================= -->
+<div class="page" id="page-insights">
+<div style="padding:20px">
+  <div class="page-header">
+    <div><div class="page-title">AI Insights</div><div class="page-subtitle">Model performance, data sources &amp; prediction methodology</div></div>
+  </div>
+
+  <div class="insight-grid" style="margin-bottom:20px">
+    <div class="insight-card">
+      <div class="ic-head"><span class="ic-head-icon">🧠</span><span class="ic-head-title">Model Performance</span></div>
+      <div class="ic-body">
+        <div class="ic-metric"><span class="ic-metric-name">Overall Accuracy</span><span class="ic-metric-val trend-up">94.2%</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Home Win Accuracy</span><span class="ic-metric-val trend-up">96.1%</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Draw Prediction</span><span class="ic-metric-val trend-flat">71.3%</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Away Win Accuracy</span><span class="ic-metric-val trend-up">89.4%</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">EV Bets Won</span><span class="ic-metric-val trend-up">73.1%</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Last Model Update</span><span class="ic-metric-val trend-flat">2h ago</span></div>
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="ic-head"><span class="ic-head-icon">📡</span><span class="ic-head-title">Data Sources</span></div>
+      <div class="ic-body">
+        <div class="ic-metric"><span class="ic-metric-name">Leagues Covered</span><span class="ic-metric-val">47</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Matches Analysed</span><span class="ic-metric-val">124,839</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Data Points / Match</span><span class="ic-metric-val">1,200+</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Historical Depth</span><span class="ic-metric-val">10 Years</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Live Data Latency</span><span class="ic-metric-val trend-up">&lt; 5s</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Odds Providers</span><span class="ic-metric-val">12</span></div>
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="ic-head"><span class="ic-head-icon">📊</span><span class="ic-head-title">Feature Importance</span></div>
+      <div class="ic-body">
+        <div class="ic-metric"><span class="ic-metric-name">Recent Form (5 games)</span><span class="ic-metric-val">28%</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Head-to-Head Record</span><span class="ic-metric-val">19%</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Home / Away Factor</span><span class="ic-metric-val">17%</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">xG (Expected Goals)</span><span class="ic-metric-val">14%</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Squad Injuries</span><span class="ic-metric-val">12%</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Market Odds Movement</span><span class="ic-metric-val">10%</span></div>
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="ic-head"><span class="ic-head-icon">💰</span><span class="ic-head-title">Value Betting ROI</span></div>
+      <div class="ic-body">
+        <div class="ic-metric"><span class="ic-metric-name">30-Day ROI</span><span class="ic-metric-val trend-up">+18.4%</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Bets Recommended</span><span class="ic-metric-val">214</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Average Odds</span><span class="ic-metric-val">2.14</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Strike Rate</span><span class="ic-metric-val trend-up">73.1%</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Max Drawdown</span><span class="ic-metric-val trend-down">-8.2%</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Sharpe Ratio</span><span class="ic-metric-val">2.41</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-header"><span class="card-title">🤖 AI Models Active</span></div>
+    <div style="padding:16px">
+      <div class="model-card">
+        <div class="model-header"><span class="model-name">DeepMatch v3.2</span><span class="model-version">Primary Model</span></div>
+        <div class="model-acc-bar"><div class="model-acc-fill" style="width:94%"></div></div>
+        <div class="model-stats">
+          <div class="ms-item"><strong>94.2%</strong>Accuracy</div>
+          <div class="ms-item"><strong>XGBoost Ensemble</strong>Architecture</div>
+          <div class="ms-item"><strong>847ms</strong>Inference</div>
+          <div class="ms-item"><strong>🟢 Live</strong>Status</div>
         </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">First Name</label>
-            <input type="text" class="form-input" id="reg-fname" placeholder="John" autocomplete="given-name">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Last Name</label>
-            <input type="text" class="form-input" id="reg-lname" placeholder="Smith" autocomplete="family-name">
-          </div>
+      </div>
+      <div class="model-card">
+        <div class="model-header"><span class="model-name">FormNet v1.8</span><span class="model-version">Form Specialist</span></div>
+        <div class="model-acc-bar"><div class="model-acc-fill" style="width:89%"></div></div>
+        <div class="model-stats">
+          <div class="ms-item"><strong>89.1%</strong>Accuracy</div>
+          <div class="ms-item"><strong>Statistical Model</strong>Architecture</div>
+          <div class="ms-item"><strong>1.2s</strong>Inference</div>
+          <div class="ms-item"><strong>🟢 Live</strong>Status</div>
         </div>
-
-        <div class="form-group">
-          <label class="form-label">Email Address</label>
-          <div class="input-icon-wrap">
-            <span class="input-icon">✉️</span>
-            <input type="email" class="form-input" id="reg-email" placeholder="john@example.com" autocomplete="email">
-          </div>
+      </div>
+      <div class="model-card">
+        <div class="model-header"><span class="model-name">OddsArb v2.0</span><span class="model-version">Value Detector</span></div>
+        <div class="model-acc-bar"><div class="model-acc-fill" style="width:73%"></div></div>
+        <div class="model-stats">
+          <div class="ms-item"><strong>73.1%</strong>EV Win Rate</div>
+          <div class="ms-item"><strong>Kelly Criterion</strong>Architecture</div>
+          <div class="ms-item"><strong>210ms</strong>Inference</div>
+          <div class="ms-item"><strong>🟢 Live</strong>Status</div>
         </div>
+      </div>
+    </div>
+  </div>
 
-        <div class="form-group">
-          <label class="form-label">Username</label>
-          <div class="input-icon-wrap">
-            <span class="input-icon">👤</span>
-            <input type="text" class="form-input" id="reg-user" placeholder="johndoe" autocomplete="username">
-          </div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">🔥 Prediction Accuracy Heatmap (Last 7 weeks)</span></div>
+    <div class="card-body">
+      <div class="heatmap-grid" id="heatmap"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:12px;font-size:11px;color:var(--text-3)">
+        <span>Low</span>
+        <div style="display:flex;gap:3px">
+          <div style="width:14px;height:14px;border-radius:2px" class="hm-0"></div>
+          <div style="width:14px;height:14px;border-radius:2px" class="hm-1"></div>
+          <div style="width:14px;height:14px;border-radius:2px" class="hm-2"></div>
+          <div style="width:14px;height:14px;border-radius:2px" class="hm-3"></div>
+          <div style="width:14px;height:14px;border-radius:2px" class="hm-4"></div>
+          <div style="width:14px;height:14px;border-radius:2px" class="hm-5"></div>
         </div>
+        <span>High Accuracy</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
 
-        <div class="form-group">
-          <label class="form-label">Password</label>
-          <div class="input-icon-wrap">
-            <span class="input-icon">🔒</span>
-            <input type="password" class="form-input" id="reg-pass" placeholder="Min. 8 characters" autocomplete="new-password">
-            <button class="input-toggle" onclick="togglePw('reg-pass',this)" type="button">👁</button>
-          </div>
+<!-- ========================= LIVE CENTRE PAGE ========================= -->
+<div class="page" id="page-live">
+<div style="padding:20px">
+  <div class="page-header">
+    <div><div class="page-title">Live Centre <span style="color:var(--red)">●</span></div><div class="page-subtitle">Real-time match data &amp; in-play predictions</div></div>
+  </div>
+  <div id="live-container"></div>
+</div>
+</div>
+
+<!-- ========================= STATISTICS PAGE ========================= -->
+<div class="page" id="page-statistics">
+<div style="padding:20px">
+  <div class="page-header">
+    <div><div class="page-title">Statistics</div><div class="page-subtitle">Detailed prediction analytics &amp; performance tracking</div></div>
+    <div class="header-actions">
+      <select><option>Last 30 Days</option><option>Last 7 Days</option><option>Last 90 Days</option><option>All Time</option></select>
+    </div>
+  </div>
+  <div class="grid-4" style="margin-bottom:20px">
+    <div class="stat-card"><div class="stat-card-label">Total Predictions</div><div class="stat-card-value" style="color:var(--gold)">12,847</div><div class="stat-card-sub"><span class="delta-up">↑ 284</span> this week</div></div>
+    <div class="stat-card"><div class="stat-card-label">Correct Predictions</div><div class="stat-card-value" style="color:var(--green-lt)">12,102</div><div class="stat-card-sub">94.2% accuracy rate</div></div>
+    <div class="stat-card"><div class="stat-card-label">Value Bets Profit</div><div class="stat-card-value" style="color:var(--green-lt)">+£4,284</div><div class="stat-card-sub">Based on £10 flat stakes</div></div>
+    <div class="stat-card"><div class="stat-card-label">Current Streak</div><div class="stat-card-value" style="color:var(--gold)">14🔥</div><div class="stat-card-sub">Consecutive correct calls</div></div>
+  </div>
+  <div class="grid-2" style="margin-bottom:20px">
+    <div class="card">
+      <div class="card-header"><span class="card-title">📈 Monthly Accuracy</span></div>
+      <div class="card-body">
+        <div class="mini-bar-chart" id="monthly-chart" style="height:120px"></div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-3);margin-top:6px">
+          <span>Oct</span><span>Nov</span><span>Dec</span><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span>
         </div>
-
-        <div class="terms-check">
-          <input type="checkbox" id="terms-cb">
-          <label for="terms-cb">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>. I confirm I am 18+ and understand predictions are for entertainment purposes.</label>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">🎯 Prediction Types</span></div>
+      <div class="card-body" style="display:flex;align-items:center;gap:24px">
+        <div class="mini-donut">
+          <svg class="donut-svg" viewBox="0 0 80 80" width="80" height="80">
+            <circle class="donut-track" cx="40" cy="40" r="30"/>
+            <circle class="donut-seg" cx="40" cy="40" r="30" stroke="var(--blue)" stroke-dasharray="113 75"/>
+            <circle class="donut-seg" cx="40" cy="40" r="30" stroke="var(--gold)" stroke-dasharray="56 132" stroke-dashoffset="-113"/>
+            <circle class="donut-seg" cx="40" cy="40" r="30" stroke="var(--red)" stroke-dasharray="19 169" stroke-dashoffset="-169"/>
+          </svg>
+          <div class="donut-label" style="font-size:12px;color:var(--text-2)">1X2</div>
         </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px"><div style="width:10px;height:10px;border-radius:50%;background:var(--blue);flex-shrink:0"></div><span style="flex:1;color:var(--text-2)">Home Win</span><span style="font-family:var(--f-cond);font-weight:700">59.8%</span></div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px"><div style="width:10px;height:10px;border-radius:50%;background:var(--gold);flex-shrink:0"></div><span style="flex:1;color:var(--text-2)">Draw</span><span style="font-family:var(--f-cond);font-weight:700">29.6%</span></div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px"><div style="width:10px;height:10px;border-radius:50%;background:var(--red);flex-shrink:0"></div><span style="flex:1;color:var(--text-2)">Away Win</span><span style="font-family:var(--f-cond);font-weight:700">10.6%</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">🌍 Accuracy by League</span></div>
+    <div class="card-body" style="padding:8px 16px">
+      <div class="league-row"><span class="league-flag">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span><span class="league-name">Premier League</span><div class="league-bar" style="flex:0 0 200px"><div class="league-bar-fill" style="width:96.1%"></div></div><span class="league-acc">96.1%</span></div>
+      <div class="league-row"><span class="league-flag">🇪🇸</span><span class="league-name">La Liga</span><div class="league-bar" style="flex:0 0 200px"><div class="league-bar-fill" style="width:93.4%"></div></div><span class="league-acc">93.4%</span></div>
+      <div class="league-row"><span class="league-flag">🇩🇪</span><span class="league-name">Bundesliga</span><div class="league-bar" style="flex:0 0 200px"><div class="league-bar-fill" style="width:91.7%"></div></div><span class="league-acc">91.7%</span></div>
+      <div class="league-row"><span class="league-flag">🇮🇹</span><span class="league-name">Serie A</span><div class="league-bar" style="flex:0 0 200px"><div class="league-bar-fill" style="width:90.2%"></div></div><span class="league-acc">90.2%</span></div>
+      <div class="league-row"><span class="league-flag">🇫🇷</span><span class="league-name">Ligue 1</span><div class="league-bar" style="flex:0 0 200px"><div class="league-bar-fill" style="width:88.9%"></div></div><span class="league-acc">88.9%</span></div>
+      <div class="league-row"><span class="league-flag">🇳🇱</span><span class="league-name">Eredivisie</span><div class="league-bar" style="flex:0 0 200px"><div class="league-bar-fill" style="width:86.2%"></div></div><span class="league-acc">86.2%</span></div>
+      <div class="league-row"><span class="league-flag">🇵🇹</span><span class="league-name">Primeira Liga</span><div class="league-bar" style="flex:0 0 200px"><div class="league-bar-fill" style="width:84.1%"></div></div><span class="league-acc">84.1%</span></div>
+    </div>
+  </div>
+</div>
+</div>
 
-        <div class="form-error" id="signup-err" style="margin-bottom:12px">Please fill in all fields and verify your promo code.</div>
+<!-- ========================= LEADERBOARD PAGE ========================= -->
+<div class="page" id="page-leaderboard">
+<div style="padding:20px">
+  <div class="page-header">
+    <div><div class="page-title">Leaderboard</div><div class="page-subtitle">Top AI prediction performers this month</div></div>
+    <div class="header-actions"><select><option>This Month</option><option>This Week</option><option>All Time</option></select></div>
+  </div>
+  <div style="display:flex;justify-content:center;align-items:flex-end;gap:16px;margin-bottom:24px;padding:0 40px">
+    <div style="text-align:center;flex:1">
+      <div style="width:56px;height:56px;border-radius:50%;background:#c0c0c0;color:#111;font-family:var(--f-cond);font-size:18px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 8px">MR</div>
+      <div style="font-weight:600;font-size:13px">Maria R.</div>
+      <div style="font-family:var(--f-cond);font-size:22px;font-weight:800;color:var(--green-lt)">+£2,140</div>
+      <div style="background:var(--bg-card);border:1px solid #c0c0c0;border-radius:var(--radius) var(--radius) 0 0;height:70px;margin-top:8px;display:flex;align-items:center;justify-content:center"><span style="font-family:var(--f-cond);font-size:28px;color:#c0c0c0">2</span></div>
+    </div>
+    <div style="text-align:center;flex:1">
+      <div style="font-size:24px;margin-bottom:4px">👑</div>
+      <div style="width:64px;height:64px;border-radius:50%;background:var(--gold);color:#111;font-family:var(--f-cond);font-size:20px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 8px">JS</div>
+      <div style="font-weight:600;font-size:14px">John S.</div>
+      <div style="font-family:var(--f-cond);font-size:26px;font-weight:800;color:var(--gold)">+£3,840</div>
+      <div style="background:var(--bg-card);border:2px solid var(--gold);border-radius:var(--radius) var(--radius) 0 0;height:90px;margin-top:8px;display:flex;align-items:center;justify-content:center"><span style="font-family:var(--f-cond);font-size:36px;color:var(--gold)">1</span></div>
+    </div>
+    <div style="text-align:center;flex:1">
+      <div style="width:56px;height:56px;border-radius:50%;background:#cd7f32;color:#fff;font-family:var(--f-cond);font-size:18px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 8px">DK</div>
+      <div style="font-weight:600;font-size:13px">David K.</div>
+      <div style="font-family:var(--f-cond);font-size:22px;font-weight:800;color:var(--green-lt)">+£1,920</div>
+      <div style="background:var(--bg-card);border:1px solid #cd7f32;border-radius:var(--radius) var(--radius) 0 0;height:55px;margin-top:8px;display:flex;align-items:center;justify-content:center"><span style="font-family:var(--f-cond);font-size:24px;color:#cd7f32">3</span></div>
+    </div>
+  </div>
+  <div class="lb-head-row">
+    <span style="text-align:center">#</span><span>User</span>
+    <span>Bets</span><span>Accuracy</span><span>Profit</span><span>ROI</span>
+  </div>
+  <div id="lb-rows"></div>
+</div>
+</div>
 
-        <button class="btn-primary" id="signup-btn" onclick="handleSignup()">
-          <span id="signup-btn-text">Create Account</span>
-          <div class="btn-loading" id="signup-loading"></div>
-        </button>
+<!-- ========================= HISTORY PAGE ========================= -->
+<div class="page" id="page-history">
+<div style="padding:20px">
+  <div class="page-header">
+    <div><div class="page-title">Prediction History</div><div class="page-subtitle">Your past predictions and results</div></div>
+    <div class="header-actions">
+      <button class="btn btn-outline" onclick="showToast('CSV export feature coming soon!')">Export CSV</button>
+    </div>
+  </div>
+  <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+    <div class="stat-card" style="flex:1;min-width:120px"><div class="stat-card-label">Total Bets</div><div class="stat-card-value" style="color:var(--gold)">284</div></div>
+    <div class="stat-card" style="flex:1;min-width:120px"><div class="stat-card-label">Won</div><div class="stat-card-value" style="color:var(--green-lt)">208</div></div>
+    <div class="stat-card" style="flex:1;min-width:120px"><div class="stat-card-label">Lost</div><div class="stat-card-value" style="color:var(--red)">76</div></div>
+    <div class="stat-card" style="flex:1;min-width:120px"><div class="stat-card-label">Total Profit</div><div class="stat-card-value" style="color:var(--green-lt)">+£1,284</div></div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Recent Predictions</span>
+      <div style="display:flex;gap:6px">
+        <button class="filter-btn active" data-hf="all" style="font-size:11px;padding:4px 10px">All</button>
+        <button class="filter-btn" data-hf="won" style="font-size:11px;padding:4px 10px">Won</button>
+        <button class="filter-btn" data-hf="lost" style="font-size:11px;padding:4px 10px">Lost</button>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 100px 80px 70px 70px 80px;padding:8px 16px;font-size:10px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--border)">
+      <span>Match</span><span>Prediction</span><span>Odds</span><span>Stake</span><span>Result</span><span>Profit</span>
+    </div>
+    <div id="history-rows"></div>
+  </div>
+</div>
+</div>
 
-        <div class="auth-footer">
-          Already have an account? <a href="#" onclick="switchTab('login')">Sign in →</a><br>
-          <a href="#" style="font-size:11px;margin-top:6px;display:block">Need an access code? Purchase a plan →</a>
+<!-- ========================= BET CALCULATOR PAGE ========================= -->
+<div class="page" id="page-calculator">
+<div style="padding:20px">
+  <div class="page-header">
+    <div><div class="page-title">Bet Calculator 🧮</div><div class="page-subtitle">Calculate returns, Kelly stakes, and expected value</div></div>
+  </div>
+  <div class="grid-2" style="margin-bottom:20px">
+    <!-- Returns Calculator -->
+    <div class="card">
+      <div class="card-header"><span class="card-title">💰 Returns Calculator</span></div>
+      <div class="card-body">
+        <div style="margin-bottom:14px">
+          <label style="font-size:11px;color:var(--text-2);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px">Stake (£)</label>
+          <input type="number" id="calc-stake" value="10" min="0.01" step="0.01" style="width:100%;background:var(--bg-primary);border:1px solid var(--border);color:var(--text-1);border-radius:var(--radius-sm);padding:9px 12px;font-size:14px;outline:none" oninput="calcReturns()">
+        </div>
+        <div style="margin-bottom:14px">
+          <label style="font-size:11px;color:var(--text-2);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px">Odds (Decimal)</label>
+          <input type="number" id="calc-odds" value="2.50" min="1.01" step="0.01" style="width:100%;background:var(--bg-primary);border:1px solid var(--border);color:var(--text-1);border-radius:var(--radius-sm);padding:9px 12px;font-size:14px;outline:none" oninput="calcReturns()">
+        </div>
+        <div style="background:var(--bg-primary);border-radius:var(--radius-sm);padding:16px;margin-top:8px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px"><span style="color:var(--text-2)">Potential Return</span><span id="calc-return" style="font-family:var(--f-cond);font-weight:800;color:var(--gold);font-size:20px">£25.00</span></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px"><span style="color:var(--text-2)">Profit</span><span id="calc-profit" style="font-family:var(--f-cond);font-weight:700;color:var(--green-lt)">£15.00</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--text-2)">ROI</span><span id="calc-roi" style="font-family:var(--f-cond);font-weight:700;color:var(--green-lt)">150%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kelly Calculator -->
+    <div class="card">
+      <div class="card-header"><span class="card-title">📐 Kelly Criterion Calculator</span></div>
+      <div class="card-body">
+        <div style="margin-bottom:14px">
+          <label style="font-size:11px;color:var(--text-2);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px">Your Win Probability (%)</label>
+          <input type="number" id="kelly-prob" value="60" min="1" max="99" style="width:100%;background:var(--bg-primary);border:1px solid var(--border);color:var(--text-1);border-radius:var(--radius-sm);padding:9px 12px;font-size:14px;outline:none" oninput="calcKelly()">
+        </div>
+        <div style="margin-bottom:14px">
+          <label style="font-size:11px;color:var(--text-2);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px">Bookmaker Odds (Decimal)</label>
+          <input type="number" id="kelly-odds" value="2.10" min="1.01" step="0.01" style="width:100%;background:var(--bg-primary);border:1px solid var(--border);color:var(--text-1);border-radius:var(--radius-sm);padding:9px 12px;font-size:14px;outline:none" oninput="calcKelly()">
+        </div>
+        <div style="margin-bottom:14px">
+          <label style="font-size:11px;color:var(--text-2);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px">Bankroll (£)</label>
+          <input type="number" id="kelly-bank" value="500" min="1" style="width:100%;background:var(--bg-primary);border:1px solid var(--border);color:var(--text-1);border-radius:var(--radius-sm);padding:9px 12px;font-size:14px;outline:none" oninput="calcKelly()">
+        </div>
+        <div style="background:var(--bg-primary);border-radius:var(--radius-sm);padding:16px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px"><span style="color:var(--text-2)">Kelly %</span><span id="kelly-pct" style="font-family:var(--f-cond);font-weight:800;color:var(--gold);font-size:20px">9.5%</span></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px"><span style="color:var(--text-2)">Full Kelly Stake</span><span id="kelly-stake" style="font-family:var(--f-cond);font-weight:700;color:var(--green-lt)">£47.62</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--text-2)">½ Kelly (Safer)</span><span id="kelly-half" style="font-family:var(--f-cond);font-weight:700;color:var(--blue)">£23.81</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EV Calculator -->
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-header"><span class="card-title">📊 Expected Value Calculator</span></div>
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px">
+        <div>
+          <label style="font-size:11px;color:var(--text-2);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px">AI Win Prob (%)</label>
+          <input type="number" id="ev-prob" value="55" min="1" max="99" style="width:100%;background:var(--bg-primary);border:1px solid var(--border);color:var(--text-1);border-radius:var(--radius-sm);padding:9px 12px;font-size:14px;outline:none" oninput="calcEV()">
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--text-2);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px">Bookmaker Odds</label>
+          <input type="number" id="ev-odds" value="2.20" min="1.01" step="0.01" style="width:100%;background:var(--bg-primary);border:1px solid var(--border);color:var(--text-1);border-radius:var(--radius-sm);padding:9px 12px;font-size:14px;outline:none" oninput="calcEV()">
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--text-2);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px">Stake (£)</label>
+          <input type="number" id="ev-stake" value="10" min="0.01" step="0.01" style="width:100%;background:var(--bg-primary);border:1px solid var(--border);color:var(--text-1);border-radius:var(--radius-sm);padding:9px 12px;font-size:14px;outline:none" oninput="calcEV()">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+        <div style="background:var(--bg-primary);border-radius:var(--radius-sm);padding:14px;text-align:center">
+          <div style="font-size:11px;color:var(--text-3);text-transform:uppercase;margin-bottom:4px">Expected Value</div>
+          <div id="ev-result" style="font-family:var(--f-cond);font-size:24px;font-weight:900;color:var(--green-lt)">+£2.10</div>
+        </div>
+        <div style="background:var(--bg-primary);border-radius:var(--radius-sm);padding:14px;text-align:center">
+          <div style="font-size:11px;color:var(--text-3);text-transform:uppercase;margin-bottom:4px">Fair Odds</div>
+          <div id="ev-fair" style="font-family:var(--f-cond);font-size:24px;font-weight:900;color:var(--blue)">1.82</div>
+        </div>
+        <div style="background:var(--bg-primary);border-radius:var(--radius-sm);padding:14px;text-align:center">
+          <div style="font-size:11px;color:var(--text-3);text-transform:uppercase;margin-bottom:4px">Edge</div>
+          <div id="ev-edge" style="font-family:var(--f-cond);font-size:24px;font-weight:900;color:var(--gold)">+21%</div>
         </div>
       </div>
     </div>
   </div>
 </div>
+</div>
 
-<!-- ============================================================
-     MAIN APP
-============================================================ -->
-<div id="app">
-
-  <!-- TOP NAV -->
-  <header class="top-nav">
-    <button class="hamburger" id="hamburger-btn">☰</button>
-    <div class="logo">Sport<span>AI</span><span class="logo-badge">PRO</span></div>
-    <div class="nav-spacer"></div>
-    <div class="nav-search">
-      <span style="color:var(--text-3);font-size:13px">🔍</span>
-      <input type="text" placeholder="Search teams, leagues…" id="search-inp" onclick="openSearch()">
-    </div>
-    <div class="live-pill">● LIVE</div>
-    <button class="nav-btn" id="notif-btn" title="Notifications">
-      🔔<span class="nav-dot" id="notif-dot"></span>
-    </button>
-    <button class="nav-btn" id="betslip-btn" title="Betslip">
-      🎫<span class="nav-count" id="bs-badge">0</span>
-    </button>
-    <button class="user-menu-btn" id="user-menu-btn">
-      <div class="user-avatar-sm" id="nav-avatar">JS</div>
-      <span id="nav-username">John</span>
-      <span>▾</span>
-    </button>
-  </header>
-
-  <!-- USER DROPDOWN -->
-  <div class="user-dropdown" id="user-dropdown">
-    <div class="ud-header">
-      <div class="ud-name" id="ud-name">John Smithson</div>
-      <div class="ud-email" id="ud-email">john@sportai.demo</div>
-      <span class="ud-plan" id="ud-plan">Pro</span>
-    </div>
-    <button class="ud-item" onclick="navigateTo('settings');closeDropdown()">⚙️ Settings</button>
-    <button class="ud-item" onclick="navigateTo('history');closeDropdown()">📜 My Predictions</button>
-    <button class="ud-item" onclick="navigateTo('settings');closeDropdown()">💳 Subscription</button>
-    <div class="ud-sep"></div>
-    <button class="ud-item danger" onclick="logout()">🚪 Sign Out</button>
+<!-- ========================= SETTINGS PAGE ========================= -->
+<div class="page" id="page-settings">
+<div style="padding:20px">
+  <div class="page-header">
+    <div><div class="page-title">Settings</div><div class="page-subtitle">Manage your account, notifications &amp; preferences</div></div>
   </div>
 
-  <!-- TICKER -->
-  <div class="ticker">
-    <div class="ticker-track">
-      <div class="t-item"><span class="t-val" id="t-total">—</span><span class="t-lbl">Matches</span></div>
-      <div class="t-sep"></div>
-      <div class="t-item"><span class="t-val red" id="t-live">—</span><span class="t-lbl">Live</span></div>
-      <div class="t-sep"></div>
-      <div class="t-item"><span class="t-val green" id="t-val">—</span><span class="t-lbl">Value Bets</span></div>
-      <div class="t-sep"></div>
-      <div class="t-item"><span class="t-val">94.2%</span><span class="t-lbl">AI Accuracy</span></div>
-      <div class="t-sep"></div>
-      <div class="t-item"><span class="t-val green">+18.4%</span><span class="t-lbl">30d ROI</span></div>
-      <div class="t-sep"></div>
-      <div class="t-item"><span class="t-val">73.1%</span><span class="t-lbl">Win Rate 7d</span></div>
-      <div class="t-sep"></div>
-      <div class="t-item"><span class="t-val">1,284</span><span class="t-lbl">Today</span></div>
+  <div class="settings-section">
+    <div class="settings-section-header"><span class="settings-section-icon">👤</span><span class="settings-section-title">Account</span></div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name" id="settings-name">John Smithson</div><div class="setting-desc" id="settings-email">john.smithson@email.com</div></div><span class="plan-badge plan-pro" id="settings-plan">PRO</span></div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Subscription</div><div class="setting-desc">Pro Plan — renews 1 May 2026</div></div><button class="btn btn-outline">Manage</button></div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Timezone</div><div class="setting-desc">Affects kick-off times displayed</div></div>
+      <select class="setting-select"><option>Africa/Nairobi (EAT +3)</option><option>Europe/London (GMT)</option><option>America/New_York (ET)</option></select>
     </div>
-    <div class="ticker-time" id="ticker-time">—</div>
-  </div>
-
-  <div class="app-body">
-
-    <!-- SIDEBAR OVERLAY -->
-    <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
-
-    <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
-      <button class="sidebar-close" onclick="closeSidebar()">✕</button>
-      <div class="sb-section">
-        <div class="sb-label">Main</div>
-        <button class="nav-item active" data-page="dashboard"><span class="nav-icon">🏠</span>Dashboard</button>
-        <button class="nav-item" data-page="predictions"><span class="nav-icon">🎯</span>Predictions<span class="nav-badge green" id="val-badge">0</span></button>
-        <button class="nav-item" data-page="insights"><span class="nav-icon">🤖</span>AI Insights</button>
-        <button class="nav-item" data-page="live"><span class="nav-icon">📡</span>Live Centre<span class="nav-badge" id="live-badge">0</span></button>
-      </div>
-      <div class="sb-section">
-        <div class="sb-label">Analysis</div>
-        <button class="nav-item" data-page="statistics"><span class="nav-icon">📊</span>Statistics</button>
-        <button class="nav-item" data-page="leaderboard"><span class="nav-icon">🏆</span>Leaderboard</button>
-        <button class="nav-item" data-page="history"><span class="nav-icon">📜</span>My History</button>
-        <button class="nav-item" data-page="valuebets"><span class="nav-icon">💎</span>Value Bets<span class="nav-badge gold" id="vb-badge">0</span></button>
-      </div>
-      <div class="sb-section">
-        <div class="sb-label">Account</div>
-        <button class="nav-item" data-page="settings"><span class="nav-icon">⚙️</span>Settings</button>
-        <button class="nav-item" data-page="settings"><span class="nav-icon">💳</span>Subscription</button>
-      </div>
-      <div class="sb-bottom">
-        <div class="acc-widget">
-          <div class="acc-lbl">AI Accuracy (30d)</div>
-          <div class="acc-val">94.2%</div>
-          <div class="acc-sub">↑ +1.4% vs last month</div>
-          <div class="acc-track"><div class="acc-fill" style="width:94.2%"></div></div>
-        </div>
-      </div>
-    </aside>
-
-    <!-- MAIN CONTENT -->
-    <main class="main">
-
-      <!-- ======= DASHBOARD ======= -->
-      <div class="page active" id="page-dashboard">
-      <div class="pg">
-        <div class="pg-header">
-          <div>
-            <div class="pg-title">Dashboard</div>
-            <div class="pg-sub">Welcome back, <span id="dash-welcome">John</span>. Here's today's overview.</div>
-          </div>
-          <div class="hdr-actions">
-            <select class="inp">
-              <option>⚽ Football</option>
-              <option>🏀 Basketball</option>
-              <option>🎾 Tennis</option>
-            </select>
-            <button class="btn btn-gold" onclick="navigateTo('predictions')">View Predictions →</button>
-          </div>
-        </div>
-
-        <!-- Stat cards -->
-        <div class="g4" style="margin-bottom:20px">
-          <div class="stat-card gold">
-            <div class="sc-label">Today's Predictions</div>
-            <div class="sc-val" style="color:var(--gold)">47</div>
-            <div class="sc-sub"><span class="up">↑ 12</span>&nbsp;vs yesterday</div>
-          </div>
-          <div class="stat-card red">
-            <div class="sc-label">Live Matches</div>
-            <div class="sc-val" style="color:var(--red)" id="dash-live">—</div>
-            <div class="sc-sub"><span style="color:var(--red)">● Active now</span></div>
-          </div>
-          <div class="stat-card green">
-            <div class="sc-label">Value Bets Found</div>
-            <div class="sc-val" style="color:var(--green)" id="dash-value">—</div>
-            <div class="sc-sub"><span class="up">↑ 3</span>&nbsp;high confidence</div>
-          </div>
-          <div class="stat-card blue">
-            <div class="sc-label">Portfolio ROI</div>
-            <div class="sc-val" style="color:var(--blue)">+18.4%</div>
-            <div class="sc-sub"><span class="up">↑ 2.1%</span>&nbsp;this week</div>
-          </div>
-        </div>
-
-        <!-- Featured + Value bets -->
-        <div style="display:grid;grid-template-columns:1fr 300px;gap:16px;margin-bottom:20px">
-          <div class="card">
-            <div class="card-hd">
-              <span class="card-title">⭐ Featured Match</span>
-              <span class="badge badge-red">LIVE 73'</span>
-            </div>
-            <div class="card-bd">
-              <div class="feat-scores">
-                <div class="feat-team">
-                  <div class="feat-name">Man City</div>
-                  <div class="feat-score" style="color:var(--gold)">2</div>
-                  <div class="vst-form" style="justify-content:center;margin-top:8px;display:flex;gap:3px">
-                    <div class="f-dot fw">W</div><div class="f-dot fw">W</div><div class="f-dot fd">D</div><div class="f-dot fw">W</div><div class="f-dot fw">W</div>
-                  </div>
-                </div>
-                <div class="feat-vs">VS</div>
-                <div class="feat-team">
-                  <div class="feat-name">Arsenal</div>
-                  <div class="feat-score" style="color:var(--text-2)">1</div>
-                  <div class="vst-form" style="justify-content:center;margin-top:8px;display:flex;gap:3px">
-                    <div class="f-dot fw">W</div><div class="f-dot fl">L</div><div class="f-dot fw">W</div><div class="f-dot fw">W</div><div class="f-dot fd">D</div>
-                  </div>
-                </div>
-              </div>
-              <div class="probs-row">
-                <div class="prob-seg seg-h seg-best">
-                  <div class="ps-lbl">Home Win</div>
-                  <div class="ps-val">58%</div>
-                  <div class="ps-odds">1.72</div>
-                </div>
-                <div class="prob-seg seg-d">
-                  <div class="ps-lbl">Draw</div>
-                  <div class="ps-val">22%</div>
-                  <div class="ps-odds">3.50</div>
-                </div>
-                <div class="prob-seg seg-a">
-                  <div class="ps-lbl">Away Win</div>
-                  <div class="ps-val">20%</div>
-                  <div class="ps-odds">4.80</div>
-                </div>
-              </div>
-              <div class="ai-row"><span class="ai-icon-lbl">🤖</span><strong>AI:</strong> Man City dominate with 68% possession and 7 shots on target. Value in Home Win at 1.72 — EV +0.04.</div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card-hd">
-              <span class="card-title">💎 Top Value Bets</span>
-              <button class="btn btn-sm btn-outline" onclick="navigateTo('valuebets')">See All</button>
-            </div>
-            <div id="top-val-list"><div class="loading-st" style="padding:20px"><div class="spinner"></div></div></div>
-          </div>
-        </div>
-
-        <!-- Match table -->
-        <div class="card" style="margin-bottom:20px">
-          <div class="card-hd">
-            <span class="card-title">📡 Live &amp; Upcoming</span>
-            <div style="display:flex;gap:6px">
-              <button class="fb active" data-df="all">All</button>
-              <button class="fb" data-df="live">Live</button>
-              <button class="fb" data-df="upcoming">Upcoming</button>
-            </div>
-          </div>
-          <div style="padding:12px">
-            <div class="match-table-head">
-              <div class="col-h">Match</div>
-              <div class="col-h">AI Probabilities</div>
-              <div class="col-h c">1</div>
-              <div class="col-h c">X</div>
-              <div class="col-h c">2</div>
-              <div class="col-h c">Value</div>
-            </div>
-            <div id="dash-matches"><div class="loading-st"><div class="spinner"></div><p>Loading…</p></div></div>
-          </div>
-        </div>
-
-        <!-- Charts row -->
-        <div class="g2">
-          <div class="card">
-            <div class="card-hd"><span class="card-title">📈 AI Performance (7 Days)</span></div>
-            <div class="card-bd">
-              <div class="bar-chart" id="perf-chart"></div>
-              <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text-3);margin-top:6px">
-                <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
-              </div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-hd"><span class="card-title">🌍 Top Leagues Today</span></div>
-            <div class="card-bd" style="padding:8px 18px">
-              <div class="league-row"><span class="lf">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span><span class="ln">Premier League</span><div class="lb-bar"><div class="lb-bar-fill" style="width:96%"></div></div><span class="la">96.1%</span></div>
-              <div class="league-row"><span class="lf">🇪🇸</span><span class="ln">La Liga</span><div class="lb-bar"><div class="lb-bar-fill" style="width:93%"></div></div><span class="la">93.4%</span></div>
-              <div class="league-row"><span class="lf">🇩🇪</span><span class="ln">Bundesliga</span><div class="lb-bar"><div class="lb-bar-fill" style="width:91%"></div></div><span class="la">91.7%</span></div>
-              <div class="league-row"><span class="lf">🇮🇹</span><span class="ln">Serie A</span><div class="lb-bar"><div class="lb-bar-fill" style="width:90%"></div></div><span class="la">90.2%</span></div>
-              <div class="league-row"><span class="lf">🇫🇷</span><span class="ln">Ligue 1</span><div class="lb-bar"><div class="lb-bar-fill" style="width:88%"></div></div><span class="la">88.9%</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      </div>
-
-      <!-- ======= PREDICTIONS ======= -->
-      <div class="page" id="page-predictions">
-      <div class="pg">
-        <div class="pg-header">
-          <div><div class="pg-title">Predictions</div><div class="pg-sub">AI-powered match outcome probabilities with expected value analysis</div></div>
-          <div class="hdr-actions">
-            <select class="inp" id="pred-sport"><option>⚽ Football</option><option>🏀 Basketball</option><option>🎾 Tennis</option></select>
-          </div>
-        </div>
-        <div class="filter-bar">
-          <span class="fl">Filter</span>
-          <button class="fb active" data-pf="all">All</button>
-          <button class="fb" data-pf="live">Live</button>
-          <button class="fb" data-pf="value">Value Only</button>
-          <button class="fb" data-pf="upcoming">Upcoming</button>
-          <button class="fb" data-pf="high">High Confidence</button>
-          <div class="fs"></div>
-          <div class="sort-row">
-            <span class="sort-lbl">Sort</span>
-            <select class="inp" id="pred-sort">
-              <option value="default">Default</option>
-              <option value="conf">Confidence</option>
-              <option value="ev">Expected Value</option>
-              <option value="time">Kick-off</option>
-            </select>
-          </div>
-        </div>
-        <div id="pred-container"><div class="loading-st"><div class="spinner"></div><p>Loading predictions…</p></div></div>
-      </div>
-      </div>
-
-      <!-- ======= VALUE BETS ======= -->
-      <div class="page" id="page-valuebets">
-      <div class="pg">
-        <div class="pg-header">
-          <div><div class="pg-title">Value Bets</div><div class="pg-sub">Positive expected-value opportunities ranked by EV and Kelly stake</div></div>
-          <div class="hdr-actions">
-            <button class="btn btn-outline" onclick="navigateTo('predictions')">All Predictions</button>
-          </div>
-        </div>
-        <div class="g4" style="margin-bottom:20px">
-          <div class="stat-card green">
-            <div class="sc-label">Value Bets Today</div>
-            <div class="sc-val" style="color:var(--green)" id="vb-count">—</div>
-            <div class="sc-sub">Positive EV detected</div>
-          </div>
-          <div class="stat-card gold">
-            <div class="sc-label">Avg Expected Value</div>
-            <div class="sc-val" style="color:var(--gold)">+6.8%</div>
-            <div class="sc-sub">Per bet placed</div>
-          </div>
-          <div class="stat-card blue">
-            <div class="sc-label">Avg Kelly Stake</div>
-            <div class="sc-val" style="color:var(--blue)">£14.20</div>
-            <div class="sc-sub">On £500 bankroll</div>
-          </div>
-          <div class="stat-card red">
-            <div class="sc-label">Strike Rate (30d)</div>
-            <div class="sc-val" style="color:var(--red)">73.1%</div>
-            <div class="sc-sub">Value bets won</div>
-          </div>
-        </div>
-        <div id="vb-container"><div class="loading-st"><div class="spinner"></div><p>Scanning for value…</p></div></div>
-      </div>
-      </div>
-
-      <!-- ======= AI INSIGHTS ======= -->
-      <div class="page" id="page-insights">
-      <div class="pg">
-        <div class="pg-header">
-          <div><div class="pg-title">AI Insights</div><div class="pg-sub">Model performance, data sources &amp; prediction methodology</div></div>
-        </div>
-
-        <div class="insight-grid">
-          <div class="insight-card">
-            <div class="ic-hd"><span class="ic-hd-icon">🧠</span><span class="ic-hd-title">Model Performance</span></div>
-            <div class="ic-bd">
-              <div class="ic-row"><span class="ic-name">Overall Accuracy</span><span class="ic-val tr-up">94.2%</span></div>
-              <div class="ic-row"><span class="ic-name">Home Win Accuracy</span><span class="ic-val tr-up">96.1%</span></div>
-              <div class="ic-row"><span class="ic-name">Draw Prediction</span><span class="ic-val tr-fl">71.3%</span></div>
-              <div class="ic-row"><span class="ic-name">Away Win Accuracy</span><span class="ic-val tr-up">89.4%</span></div>
-              <div class="ic-row"><span class="ic-name">EV Bets Won</span><span class="ic-val tr-up">73.1%</span></div>
-              <div class="ic-row"><span class="ic-name">Last Update</span><span class="ic-val tr-fl">2h ago</span></div>
-            </div>
-          </div>
-          <div class="insight-card">
-            <div class="ic-hd"><span class="ic-hd-icon">📡</span><span class="ic-hd-title">Data Sources</span></div>
-            <div class="ic-bd">
-              <div class="ic-row"><span class="ic-name">Leagues Covered</span><span class="ic-val">47</span></div>
-              <div class="ic-row"><span class="ic-name">Matches Analysed</span><span class="ic-val">124,839</span></div>
-              <div class="ic-row"><span class="ic-name">Data Points / Match</span><span class="ic-val">1,200+</span></div>
-              <div class="ic-row"><span class="ic-name">Historical Depth</span><span class="ic-val">10 Years</span></div>
-              <div class="ic-row"><span class="ic-name">Live Data Latency</span><span class="ic-val tr-up">&lt;5s</span></div>
-              <div class="ic-row"><span class="ic-name">Odds Providers</span><span class="ic-val">12</span></div>
-            </div>
-          </div>
-          <div class="insight-card">
-            <div class="ic-hd"><span class="ic-hd-icon">📊</span><span class="ic-hd-title">Feature Importance</span></div>
-            <div class="ic-bd">
-              <div class="ic-row"><span class="ic-name">Recent Form (5 games)</span><span class="ic-val">28%</span></div>
-              <div class="ic-row"><span class="ic-name">Head-to-Head Record</span><span class="ic-val">19%</span></div>
-              <div class="ic-row"><span class="ic-name">Home / Away Factor</span><span class="ic-val">17%</span></div>
-              <div class="ic-row"><span class="ic-name">xG (Expected Goals)</span><span class="ic-val">14%</span></div>
-              <div class="ic-row"><span class="ic-name">Squad Injuries</span><span class="ic-val">12%</span></div>
-              <div class="ic-row"><span class="ic-name">Odds Movement</span><span class="ic-val">10%</span></div>
-            </div>
-          </div>
-          <div class="insight-card">
-            <div class="ic-hd"><span class="ic-hd-icon">💰</span><span class="ic-hd-title">Value Betting ROI</span></div>
-            <div class="ic-bd">
-              <div class="ic-row"><span class="ic-name">30-Day ROI</span><span class="ic-val tr-up">+18.4%</span></div>
-              <div class="ic-row"><span class="ic-name">Bets Recommended</span><span class="ic-val">214</span></div>
-              <div class="ic-row"><span class="ic-name">Average Odds</span><span class="ic-val">2.14</span></div>
-              <div class="ic-row"><span class="ic-name">Strike Rate</span><span class="ic-val tr-up">73.1%</span></div>
-              <div class="ic-row"><span class="ic-name">Max Drawdown</span><span class="ic-val tr-dn">-8.2%</span></div>
-              <div class="ic-row"><span class="ic-name">Sharpe Ratio</span><span class="ic-val">2.41</span></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card" style="margin-bottom:16px">
-          <div class="card-hd"><span class="card-title">🤖 Active AI Models</span></div>
-          <div class="card-bd">
-            <div class="model-card">
-              <div class="mc-hd"><span class="mc-name">DeepMatch v3.2</span><span class="mc-ver">Primary</span></div>
-              <div class="mc-bar"><div class="mc-fill" style="width:94%"></div></div>
-              <div class="mc-stats">
-                <div class="ms"><strong>94.2%</strong>Accuracy</div>
-                <div class="ms"><strong>XGBoost</strong>Architecture</div>
-                <div class="ms"><strong>847ms</strong>Inference</div>
-                <div class="ms"><strong style="color:var(--green)">Live</strong>Status</div>
-              </div>
-            </div>
-            <div class="model-card">
-              <div class="mc-hd"><span class="mc-name">FormNet v1.8</span><span class="mc-ver">Form Specialist</span></div>
-              <div class="mc-bar"><div class="mc-fill" style="width:89%"></div></div>
-              <div class="mc-stats">
-                <div class="ms"><strong>89.1%</strong>Accuracy</div>
-                <div class="ms"><strong>Statistical</strong>Architecture</div>
-                <div class="ms"><strong>1.2s</strong>Inference</div>
-                <div class="ms"><strong style="color:var(--green)">Live</strong>Status</div>
-              </div>
-            </div>
-            <div class="model-card">
-              <div class="mc-hd"><span class="mc-name">OddsArb v2.0</span><span class="mc-ver">Value Detector</span></div>
-              <div class="mc-bar"><div class="mc-fill" style="width:73%"></div></div>
-              <div class="mc-stats">
-                <div class="ms"><strong>73.1%</strong>EV Win Rate</div>
-                <div class="ms"><strong>Kelly Criterion</strong>Architecture</div>
-                <div class="ms"><strong>210ms</strong>Inference</div>
-                <div class="ms"><strong style="color:var(--green)">Live</strong>Status</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-hd"><span class="card-title">🔥 Accuracy Heatmap (Last 7 weeks)</span></div>
-          <div class="card-bd">
-            <div class="heatmap" id="heatmap"></div>
-            <div style="display:flex;align-items:center;gap:8px;margin-top:12px;font-size:11px;color:var(--text-3)">
-              <span>Low</span>
-              <div style="display:flex;gap:3px">
-                <div class="hm-cell hm-0" style="width:16px;height:16px"></div>
-                <div class="hm-cell hm-2" style="width:16px;height:16px"></div>
-                <div class="hm-cell hm-3" style="width:16px;height:16px"></div>
-                <div class="hm-cell hm-4" style="width:16px;height:16px"></div>
-                <div class="hm-cell hm-5" style="width:16px;height:16px"></div>
-              </div>
-              <span>High</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      </div>
-
-      <!-- ======= LIVE CENTRE ======= -->
-      <div class="page" id="page-live">
-      <div class="pg">
-        <div class="pg-header">
-          <div>
-            <div class="pg-title">Live Centre <span style="color:var(--red);animation:blink-text 1.5s infinite">●</span></div>
-            <div class="pg-sub">Real-time match data &amp; in-play AI predictions</div>
-          </div>
-        </div>
-        <div id="live-container"><div class="loading-st"><div class="spinner"></div><p>Loading live matches…</p></div></div>
-      </div>
-      </div>
-
-      <!-- ======= STATISTICS ======= -->
-      <div class="page" id="page-statistics">
-      <div class="pg">
-        <div class="pg-header">
-          <div><div class="pg-title">Statistics</div><div class="pg-sub">Detailed prediction analytics &amp; performance tracking</div></div>
-          <div class="hdr-actions">
-            <select class="inp"><option>Last 30 Days</option><option>Last 7 Days</option><option>All Time</option></select>
-          </div>
-        </div>
-        <div class="g4" style="margin-bottom:20px">
-          <div class="stat-card gold"><div class="sc-label">Total Predictions</div><div class="sc-val" style="color:var(--gold)">12,847</div><div class="sc-sub"><span class="up">↑ 284</span>&nbsp;this week</div></div>
-          <div class="stat-card green"><div class="sc-label">Correct</div><div class="sc-val" style="color:var(--green)">12,102</div><div class="sc-sub">94.2% accuracy</div></div>
-          <div class="stat-card blue"><div class="sc-label">Value Bet Profit</div><div class="sc-val" style="color:var(--blue)">+£4,284</div><div class="sc-sub">£10 flat stakes</div></div>
-          <div class="stat-card red"><div class="sc-label">Current Streak</div><div class="sc-val" style="color:var(--gold)">14 🔥</div><div class="sc-sub">Consecutive correct</div></div>
-        </div>
-        <div class="g2" style="margin-bottom:20px">
-          <div class="card">
-            <div class="card-hd"><span class="card-title">📈 Monthly Accuracy</span></div>
-            <div class="card-bd">
-              <div class="bar-chart" id="monthly-chart" style="height:120px"></div>
-              <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text-3);margin-top:6px">
-                <span>Oct</span><span>Nov</span><span>Dec</span><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span>
-              </div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-hd"><span class="card-title">🎯 Prediction Split</span></div>
-            <div class="card-bd" style="display:flex;align-items:center;gap:24px">
-              <div class="donut-wrap">
-                <svg class="donut-svg" viewBox="0 0 80 80" width="80" height="80">
-                  <circle class="donut-track" cx="40" cy="40" r="30"/>
-                  <circle class="donut-seg" cx="40" cy="40" r="30" stroke="var(--blue)" stroke-dasharray="113 75" stroke-width="8" fill="none" stroke-linecap="round"/>
-                  <circle class="donut-seg" cx="40" cy="40" r="30" stroke="var(--gold)" stroke-dasharray="56 132" stroke-dashoffset="-113" stroke-width="8" fill="none" stroke-linecap="round"/>
-                  <circle class="donut-seg" cx="40" cy="40" r="30" stroke="var(--red)" stroke-dasharray="19 169" stroke-dashoffset="-169" stroke-width="8" fill="none" stroke-linecap="round"/>
-                </svg>
-                <div class="donut-lbl">1X2</div>
-              </div>
-              <div style="flex:1;display:flex;flex-direction:column;gap:10px">
-                <div style="display:flex;align-items:center;gap:8px;font-size:12px"><div style="width:10px;height:10px;border-radius:50%;background:var(--blue);flex-shrink:0"></div><span style="flex:1;color:var(--text-2)">Home Win</span><span style="font-family:var(--f-mono);font-weight:600">59.8%</span></div>
-                <div style="display:flex;align-items:center;gap:8px;font-size:12px"><div style="width:10px;height:10px;border-radius:50%;background:var(--gold);flex-shrink:0"></div><span style="flex:1;color:var(--text-2)">Draw</span><span style="font-family:var(--f-mono);font-weight:600">29.6%</span></div>
-                <div style="display:flex;align-items:center;gap:8px;font-size:12px"><div style="width:10px;height:10px;border-radius:50%;background:var(--red);flex-shrink:0"></div><span style="flex:1;color:var(--text-2)">Away Win</span><span style="font-family:var(--f-mono);font-weight:600">10.6%</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-hd"><span class="card-title">🌍 Accuracy by League</span></div>
-          <div class="card-bd" style="padding:8px 18px">
-            <div class="league-row"><span class="lf">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span><span class="ln">Premier League</span><div class="lb-bar" style="flex:0 0 200px"><div class="lb-bar-fill" style="width:96.1%"></div></div><span class="la">96.1%</span></div>
-            <div class="league-row"><span class="lf">🇪🇸</span><span class="ln">La Liga</span><div class="lb-bar" style="flex:0 0 200px"><div class="lb-bar-fill" style="width:93.4%"></div></div><span class="la">93.4%</span></div>
-            <div class="league-row"><span class="lf">🇩🇪</span><span class="ln">Bundesliga</span><div class="lb-bar" style="flex:0 0 200px"><div class="lb-bar-fill" style="width:91.7%"></div></div><span class="la">91.7%</span></div>
-            <div class="league-row"><span class="lf">🇮🇹</span><span class="ln">Serie A</span><div class="lb-bar" style="flex:0 0 200px"><div class="lb-bar-fill" style="width:90.2%"></div></div><span class="la">90.2%</span></div>
-            <div class="league-row"><span class="lf">🇫🇷</span><span class="ln">Ligue 1</span><div class="lb-bar" style="flex:0 0 200px"><div class="lb-bar-fill" style="width:88.9%"></div></div><span class="la">88.9%</span></div>
-            <div class="league-row"><span class="lf">🇳🇱</span><span class="ln">Eredivisie</span><div class="lb-bar" style="flex:0 0 200px"><div class="lb-bar-fill" style="width:86.2%"></div></div><span class="la">86.2%</span></div>
-            <div class="league-row"><span class="lf">🇵🇹</span><span class="ln">Primeira Liga</span><div class="lb-bar" style="flex:0 0 200px"><div class="lb-bar-fill" style="width:84.1%"></div></div><span class="la">84.1%</span></div>
-          </div>
-        </div>
-      </div>
-      </div>
-
-      <!-- ======= LEADERBOARD ======= -->
-      <div class="page" id="page-leaderboard">
-      <div class="pg">
-        <div class="pg-header">
-          <div><div class="pg-title">Leaderboard</div><div class="pg-sub">Top performers this month</div></div>
-          <div class="hdr-actions"><select class="inp"><option>This Month</option><option>This Week</option><option>All Time</option></select></div>
-        </div>
-        <!-- Podium -->
-        <div style="display:flex;justify-content:center;align-items:flex-end;gap:16px;margin-bottom:28px;padding:0 40px">
-          <div style="text-align:center;flex:1">
-            <div style="width:56px;height:56px;border-radius:50%;background:#c0c0c0;color:#111;font-family:var(--f-display);font-size:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px">MR</div>
-            <div style="font-weight:600;font-size:13px">Maria R.</div>
-            <div style="font-family:var(--f-display);font-size:22px;color:var(--green);letter-spacing:1px">+£2,140</div>
-            <div style="background:var(--bg-card);border:1px solid #c0c0c0;border-radius:var(--r) var(--r) 0 0;height:70px;margin-top:8px;display:flex;align-items:center;justify-content:center"><span style="font-family:var(--f-display);font-size:28px;color:#c0c0c0">2</span></div>
-          </div>
-          <div style="text-align:center;flex:1">
-            <div style="font-size:28px;margin-bottom:4px">👑</div>
-            <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dk));color:#111;font-family:var(--f-display);font-size:22px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px">JS</div>
-            <div style="font-weight:700;font-size:14px">John S.</div>
-            <div style="font-family:var(--f-display);font-size:26px;color:var(--gold);letter-spacing:1px">+£3,840</div>
-            <div style="background:var(--bg-card);border:2px solid var(--gold);border-radius:var(--r) var(--r) 0 0;height:90px;margin-top:8px;display:flex;align-items:center;justify-content:center"><span style="font-family:var(--f-display);font-size:38px;color:var(--gold)">1</span></div>
-          </div>
-          <div style="text-align:center;flex:1">
-            <div style="width:56px;height:56px;border-radius:50%;background:#cd7f32;color:#fff;font-family:var(--f-display);font-size:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px">DK</div>
-            <div style="font-weight:600;font-size:13px">David K.</div>
-            <div style="font-family:var(--f-display);font-size:22px;color:var(--green);letter-spacing:1px">+£1,920</div>
-            <div style="background:var(--bg-card);border:1px solid #cd7f32;border-radius:var(--r) var(--r) 0 0;height:55px;margin-top:8px;display:flex;align-items:center;justify-content:center"><span style="font-family:var(--f-display);font-size:24px;color:#cd7f32">3</span></div>
-          </div>
-        </div>
-        <div class="lb-hd"><span style="text-align:center">#</span><span>User</span><span>Bets</span><span>Accuracy</span><span>Profit</span><span>ROI</span></div>
-        <div id="lb-rows"></div>
-      </div>
-      </div>
-
-      <!-- ======= HISTORY ======= -->
-      <div class="page" id="page-history">
-      <div class="pg">
-        <div class="pg-header">
-          <div><div class="pg-title">My History</div><div class="pg-sub">Your prediction &amp; betting history</div></div>
-          <div class="hdr-actions">
-            <button class="btn btn-outline">📥 Export CSV</button>
-          </div>
-        </div>
-        <div class="g4" style="margin-bottom:20px">
-          <div class="stat-card gold"><div class="sc-label">Total Bets</div><div class="sc-val" style="color:var(--gold)">284</div></div>
-          <div class="stat-card green"><div class="sc-label">Won</div><div class="sc-val" style="color:var(--green)">208</div></div>
-          <div class="stat-card red"><div class="sc-label">Lost</div><div class="sc-val" style="color:var(--red)">76</div></div>
-          <div class="stat-card blue"><div class="sc-label">Total Profit</div><div class="sc-val" style="color:var(--blue)">+£1,284</div></div>
-        </div>
-        <div class="card">
-          <div class="card-hd">
-            <span class="card-title">Recent Predictions</span>
-            <div style="display:flex;gap:6px">
-              <button class="fb active" data-hf="all">All</button>
-              <button class="fb" data-hf="won">Won</button>
-              <button class="fb" data-hf="lost">Lost</button>
-              <button class="fb" data-hf="pending">Pending</button>
-            </div>
-          </div>
-          <div id="history-rows"></div>
-        </div>
-      </div>
-      </div>
-
-      <!-- ======= SETTINGS ======= -->
-      <div class="page" id="page-settings">
-      <div class="pg">
-        <div class="pg-header">
-          <div><div class="pg-title">Settings</div><div class="pg-sub">Manage your account, notifications &amp; preferences</div></div>
-          <button class="btn btn-gold" onclick="showToast('Settings saved!','success')">Save Changes</button>
-        </div>
-
-        <div class="settings-block">
-          <div class="sb-hd"><span class="sb-hd-icon">👤</span><span class="sb-hd-title">Account</span></div>
-          <div class="set-row"><div class="set-info"><div class="set-name" id="set-name">John Smithson</div><div class="set-desc" id="set-email">john@sportai.demo</div></div><span class="plan-pill plan-pro" id="set-plan">PRO</span></div>
-          <div class="set-row"><div class="set-info"><div class="set-name">Subscription</div><div class="set-desc">Pro Plan — renews 1 May 2026</div></div><button class="btn btn-sm btn-outline">Manage</button></div>
-          <div class="set-row"><div class="set-info"><div class="set-name">Timezone</div><div class="set-desc">Affects kick-off times displayed</div></div><select class="set-select"><option>Africa/Nairobi (EAT +3)</option><option>Europe/London (GMT)</option><option>America/New_York (ET)</option></select></div>
-          <div class="set-row"><div class="set-info"><div class="set-name">Odds Format</div><div class="set-desc">How odds are displayed throughout the app</div></div><select class="set-select"><option>Decimal (2.50)</option><option>Fractional (3/2)</option><option>American (+150)</option></select></div>
-          <div class="set-row"><div class="set-info"><div class="set-name">Currency</div><div class="set-desc">Currency for profit/loss display</div></div><select class="set-select"><option>GBP (£)</option><option>USD ($)</option><option>EUR (€)</option><option>KES (KSh)</option></select></div>
-        </div>
-
-        <div class="settings-block">
-          <div class="sb-hd"><span class="sb-hd-icon">🔔</span><span class="sb-hd-title">Notifications</span></div>
-          <div class="set-row"><div class="set-info"><div class="set-name">Goal Alerts</div><div class="set-desc">Notified when a goal is scored in tracked matches</div></div><label class="toggle"><input type="checkbox" checked><span class="tgl-slider"></span></label></div>
-          <div class="set-row"><div class="set-info"><div class="set-name">Value Bet Alerts</div><div class="set-desc">Notify when a high-confidence value bet is found</div></div><label class="toggle"><input type="checkbox" checked><span class="tgl-slider"></span></label></div>
-          <div class="set-row"><div class="set-info"><div class="set-name">Pre-match Reminders</div><div class="set-desc">30 minutes before tracked matches kick off</div></div><label class="toggle"><input type="checkbox"><span class="tgl-slider"></span></label></div>
-          <div class="set-row"><div class="set-info"><div class="set-name">Daily Digest Email</div><div class="set-desc">Morning summary of predictions and results</div></div><label class="toggle"><input type="checkbox" checked><span class="tgl-slider"></span></label></div>
-          <div class="set-row"><div class="set-info"><div class="set-name">In-Play Probability Shifts</div><div class="set-desc">Alert when AI probability moves more than 15%</div></div><label class="toggle"><input type="checkbox" checked><span class="tgl-slider"></span></label></div>
-        </div>
-
-        <div class="settings-block">
-          <div class="sb-hd"><span class="sb-hd-icon">🤖</span><span class="sb-hd-title">AI Preferences</span></div>
-          <div class="set-row"><div class="set-info"><div class="set-name">Minimum Confidence Threshold</div><div class="set-desc">Only show predictions above this confidence level</div></div><select class="set-select"><option>60% (All)</option><option>70%</option><option>80% (Recommended)</option><option>90% (High only)</option></select></div>
-          <div class="set-row"><div class="set-info"><div class="set-name">Favourite Leagues</div><div class="set-desc">Highlight and filter matches from selected leagues</div></div><button class="btn btn-sm btn-outline">Configure</button></div>
-          <div class="set-row"><div class="set-info"><div class="set-name">Expected Value Filter</div><div class="set-desc">Only show bets with positive expected value</div></div><label class="toggle"><input type="checkbox" checked><span class="tgl-slider"></span></label></div>
-          <div class="set-row"><div class="set-info"><div class="set-name">Auto-add Value Bets to Watchlist</div><div class="set-desc">Automatically track high EV bets</div></div><label class="toggle"><input type="checkbox"><span class="tgl-slider"></span></label></div>
-        </div>
-
-        <div class="settings-block">
-          <div class="sb-hd"><span class="sb-hd-icon">💰</span><span class="sb-hd-title">Bankroll Management</span></div>
-          <div class="set-row"><div class="set-info"><div class="set-name">Default Stake Size</div><div class="set-desc">Used for potential returns calculation</div></div><input type="number" value="10" style="width:80px;background:var(--bg-2);border:1px solid var(--border);color:var(--text-1);padding:6px 8px;border-radius:var(--r);font-size:13px;outline:none;font-family:var(--f-mono)"></div>
-          <div class="set-row"><div class="set-info"><div class="set-name">Staking Strategy</div><div class="set-desc">Method used to calculate recommended stake</div></div><select class="set-select"><option>Flat Staking</option><option>Kelly Criterion</option><option>Fractional Kelly (0.25)</option><option>Fixed % of Bankroll</option></select></div>
-          <div class="set-row"><div class="set-info"><div class="set-name">Bankroll Size</div><div class="set-desc">Total bankroll for Kelly calculations</div></div><input type="number" value="500" style="width:90px;background:var(--bg-2);border:1px solid var(--border);color:var(--text-1);padding:6px 8px;border-radius:var(--r);font-size:13px;outline:none;font-family:var(--f-mono)"></div>
-          <div class="set-row"><div class="set-info"><div class="set-name">Max Bet Percentage</div><div class="set-desc">Cap any single bet at this % of bankroll</div></div><select class="set-select"><option>5%</option><option>10% (Default)</option><option>15%</option><option>25%</option></select></div>
-        </div>
-
-        <div class="settings-block">
-          <div class="sb-hd"><span class="sb-hd-icon">🔐</span><span class="sb-hd-title">Security</span></div>
-          <div class="set-row"><div class="set-info"><div class="set-name">Change Password</div><div class="set-desc">Update your account password</div></div><button class="btn btn-sm btn-outline">Change</button></div>
-          <div class="set-row"><div class="set-info"><div class="set-name">Two-Factor Authentication</div><div class="set-desc">Add extra security to your account</div></div><label class="toggle"><input type="checkbox"><span class="tgl-slider"></span></label></div>
-          <div class="set-row"><div class="set-info"><div class="set-name">Active Sessions</div><div class="set-desc">1 active session — Chrome on Windows</div></div><button class="btn btn-sm btn-red">Revoke All</button></div>
-        </div>
-
-        <div class="upgrade-banner">
-          <div class="ub-icon">⚡</div>
-          <div style="flex:1">
-            <div class="ub-title">Upgrade to Premium</div>
-            <div class="ub-desc">Unlock unlimited predictions, advanced AI models, API access, custom alerts, and priority support.</div>
-            <div class="ub-features">
-              <span class="ub-feat">Unlimited Predictions</span>
-              <span class="ub-feat">API Access</span>
-              <span class="ub-feat">Advanced Models</span>
-              <span class="ub-feat">Custom Alerts</span>
-              <span class="ub-feat">Export Data</span>
-              <span class="ub-feat">Priority Support</span>
-              <span class="ub-feat">Multi-currency</span>
-              <span class="ub-feat">Telegram Bot</span>
-            </div>
-            <button class="btn btn-purple">Upgrade Now — £29/mo</button>
-          </div>
-        </div>
-
-        <div style="text-align:center;margin-top:20px">
-          <button class="btn btn-ghost" style="color:var(--red)" onclick="logout()">🚪 Sign Out of Account</button>
-        </div>
-      </div>
-      </div>
-
-    </main>
-  </div><!-- end app-body -->
-
-  <!-- MOBILE BOTTOM NAV -->
-  <nav class="mobile-nav">
-    <button class="mn-item active" data-page="dashboard"><span class="mn-icon">🏠</span>Home</button>
-    <button class="mn-item" data-page="predictions"><span class="mn-icon">🎯</span>Tips<span class="mn-dot show" id="mn-dot-pred"></span></button>
-    <button class="mn-item" data-page="live"><span class="mn-icon">📡</span>Live<span class="mn-dot" id="mn-dot-live"></span></button>
-    <button class="mn-item" data-page="valuebets"><span class="mn-icon">💎</span>Value</button>
-    <button class="mn-item" data-page="settings"><span class="mn-icon">⚙️</span>Account</button>
-  </nav>
-
-  <!-- BETSLIP PANEL -->
-  <div class="betslip-panel" id="betslip-panel">
-    <div class="bp-hd">
-      <div style="display:flex;align-items:center;gap:10px">
-        <span class="bp-title">Betslip</span>
-        <span class="bp-cnt" id="bp-cnt">0</span>
-      </div>
-      <button class="bp-close-btn" id="bp-close">✕</button>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Odds Format</div><div class="setting-desc">How odds are displayed</div></div>
+      <select class="setting-select"><option>Decimal (2.50)</option><option>Fractional (3/2)</option><option>American (+150)</option></select>
     </div>
-    <div class="bp-items" id="bp-items">
-      <div class="bp-empty"><div class="bp-empty-ico">🎫</div><p style="font-size:13px;color:var(--text-2)">No selections yet.<br>Click any odds button to add.</p></div>
-    </div>
-    <div class="bp-ft" id="bp-ft" style="display:none">
-      <div class="bp-stake-row">
-        <span class="bp-stake-lbl">Stake £</span>
-        <input type="number" class="bp-stake-inp" id="bp-stake" value="10" min="0.01" step="0.01">
-      </div>
-      <div class="bp-totals">
-        <div class="bp-tot-row"><span>Total Odds</span><span class="val" id="bp-total-odds">1.00</span></div>
-        <div class="bp-tot-row"><span>Potential Return</span><span class="val" id="bp-return">£10.00</span></div>
-        <div class="bp-tot-row"><span>Potential Profit</span><span class="val" id="bp-profit" style="color:var(--green)">£0.00</span></div>
-      </div>
-      <button class="bp-place" id="bp-place">Place Bet</button>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Currency</div><div class="setting-desc">Used for profit/loss calculations</div></div>
+      <select class="setting-select"><option>£ GBP</option><option>$ USD</option><option>€ EUR</option><option>KSh KES</option></select>
     </div>
   </div>
 
-  <!-- NOTIFICATIONS PANEL -->
-  <div class="notif-panel" id="notif-panel">
-    <div class="np-hd">
-      <span class="np-title">Notifications</span>
-      <button class="np-close" id="np-close">✕</button>
-    </div>
-    <div id="notif-list"></div>
+  <div class="settings-section">
+    <div class="settings-section-header"><span class="settings-section-icon">🔔</span><span class="settings-section-title">Notifications</span></div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Goal Alerts</div><div class="setting-desc">Get notified when a goal is scored in tracked matches</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Value Bet Alerts</div><div class="setting-desc">Notify when a high-confidence value bet is found</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Pre-match Reminders</div><div class="setting-desc">Reminder 30 minutes before tracked matches</div></div><label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label></div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Daily Digest Email</div><div class="setting-desc">Summary of predictions and results each morning</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Model Update Alerts</div><div class="setting-desc">Get notified when AI models are retrained</div></div><label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label></div>
   </div>
 
-  <!-- PANEL OVERLAY -->
-  <div class="panel-overlay" id="panel-overlay"></div>
+  <div class="settings-section">
+    <div class="settings-section-header"><span class="settings-section-icon">🤖</span><span class="settings-section-title">AI Preferences</span></div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Minimum Confidence</div><div class="setting-desc">Only show predictions above this confidence level</div></div>
+      <select class="setting-select"><option>60% (All)</option><option>70%</option><option>80% (Recommended)</option><option>90% (High only)</option></select>
+    </div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Favourite Leagues</div><div class="setting-desc">Highlight matches from selected leagues</div></div><button class="btn btn-outline" onclick="showToast('League selector coming soon!')">Configure</button></div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Expected Value Filter</div><div class="setting-desc">Show only bets with positive expected value</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Auto-refresh Predictions</div><div class="setting-desc">Automatically update predictions every 5 minutes</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+  </div>
+
+  <div class="settings-section">
+    <div class="settings-section-header"><span class="settings-section-icon">💰</span><span class="settings-section-title">Bankroll Management</span></div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Default Stake Size</div><div class="setting-desc">Used for potential returns calculation</div></div>
+      <input type="number" value="10" style="width:80px;background:var(--bg-primary);border:1px solid var(--border);color:var(--text-1);padding:5px 8px;border-radius:3px;font-size:13px;outline:none" placeholder="£10">
+    </div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Staking Strategy</div><div class="setting-desc">Method used to calculate recommended stake</div></div>
+      <select class="setting-select"><option>Flat Staking</option><option>Kelly Criterion</option><option>Fractional Kelly (0.25)</option></select>
+    </div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Bankroll Size</div><div class="setting-desc">Your total betting bankroll for Kelly calculations</div></div>
+      <input type="number" value="500" style="width:90px;background:var(--bg-primary);border:1px solid var(--border);color:var(--text-1);padding:5px 8px;border-radius:3px;font-size:13px;outline:none">
+    </div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Responsible Gambling Limit</div><div class="setting-desc">Daily maximum stake limit (set to 0 to disable)</div></div>
+      <input type="number" value="50" style="width:80px;background:var(--bg-primary);border:1px solid var(--border);color:var(--text-1);padding:5px 8px;border-radius:3px;font-size:13px;outline:none">
+    </div>
+  </div>
+
+  <div class="settings-section">
+    <div class="settings-section-header"><span class="settings-section-icon">🔒</span><span class="settings-section-title">Security</span></div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Change Password</div><div class="setting-desc">Update your account password</div></div><button class="btn btn-outline" onclick="showToast('Password change sent to your email!')">Change Password</button></div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Two-Factor Authentication</div><div class="setting-desc">Add an extra layer of account security</div></div><label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label></div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Active Sessions</div><div class="setting-desc">Manage where you're logged in</div></div><button class="btn btn-outline" onclick="showToast('Sessions management coming soon!')">View Sessions</button></div>
+  </div>
+
+  <div class="upgrade-card">
+    <div class="upgrade-icon">⚡</div>
+    <div style="flex:1">
+      <div class="upgrade-title">Upgrade to Premium</div>
+      <div class="upgrade-desc">Unlock unlimited predictions, advanced AI models, API access, and priority support.</div>
+      <div class="upgrade-features">
+        <span class="upgrade-feature">Unlimited Predictions</span>
+        <span class="upgrade-feature">API Access</span>
+        <span class="upgrade-feature">Advanced Models</span>
+        <span class="upgrade-feature">Custom Alerts</span>
+        <span class="upgrade-feature">Export Data</span>
+        <span class="upgrade-feature">Priority Support</span>
+      </div>
+      <button class="btn btn-purple" onclick="showToast('Redirecting to upgrade page...')">Upgrade Now — £29/mo</button>
+    </div>
+  </div>
+</div>
+</div>
+
+</main>
+</div><!-- end app-body -->
+
+<!-- BETSLIP PANEL -->
+<div class="betslip-panel" id="betslip-panel">
+  <div class="betslip-panel-header">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="bp-title">Betslip</span>
+      <span class="bp-count" id="bp-count">0</span>
+    </div>
+    <button class="bp-close" id="bp-close-btn" onclick="toggleBetslip()">✕</button>
+  </div>
+  <div class="betslip-items" id="betslip-items">
+    <div class="bp-empty"><div class="bp-empty-icon">🎫</div><p>No selections yet.<br>Click any odds to add.</p></div>
+  </div>
+  <div class="betslip-footer" id="betslip-footer" style="display:none">
+    <div class="bp-stake-row">
+      <span class="bp-stake-lbl">Stake £</span>
+      <input type="number" class="bp-stake-input" id="bp-stake" value="10" min="0.01" step="0.01" oninput="updateBetslipTotals()">
+    </div>
+    <div class="bp-totals">
+      <div class="bp-total-row"><span>Total Odds</span><span class="val" id="bp-total-odds">1.00</span></div>
+      <div class="bp-total-row"><span>Potential Return</span><span class="val" id="bp-return">£10.00</span></div>
+      <div class="bp-total-row"><span>Potential Profit</span><span class="val" id="bp-profit" style="color:var(--green-lt)">£0.00</span></div>
+    </div>
+    <button class="bp-place-btn" id="bp-place-btn" onclick="placeBet()">Place Bet</button>
+  </div>
+</div>
+
+<!-- NOTIFICATIONS PANEL -->
+<div class="notif-panel" id="notif-panel">
+  <div class="notif-panel-header">
+    <span class="np-title">Notifications</span>
+    <button class="np-close" id="np-close-btn" onclick="toggleNotif()">✕</button>
+  </div>
+  <div id="notif-list"></div>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div><span class="footer-logo">Sport<span>AI</span></span><span class="footer-sep">|</span>Predictions are AI-generated. Gamble responsibly. 18+ only.</div>
+  <div class="footer-links">
+    <a href="#">About</a><a href="#">API Docs</a><a href="#">Privacy</a><a href="#">Terms</a><a href="https://www.begambleaware.org" target="_blank">BeGambleAware.org</a>
+  </div>
+  <div>18+ Only<span class="footer-sep">|</span>© 2026 SportAI</div>
+</footer>
 
 </div><!-- end app -->
-
-<!-- SEARCH OVERLAY -->
-<div class="search-overlay" id="search-overlay" onclick="closeSearch(event)">
-  <div class="search-box" onclick="event.stopPropagation()">
-    <div class="search-inp-wrap">
-      <span style="font-size:18px;color:var(--text-3)">🔍</span>
-      <input type="text" id="search-overlay-inp" placeholder="Search teams, leagues, competitions…" oninput="liveSearch(this.value)">
-      <button onclick="closeSearch()" style="background:none;border:none;color:var(--text-3);font-size:18px;cursor:pointer">✕</button>
-    </div>
-    <div id="search-results"></div>
-  </div>
-</div>
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<script>
-// ============================================================
-//  DATA
-// ============================================================
-const PROMO_CODES = {
-  "SPORT-PRO-2026":   { plan:"Pro",     label:"Pro Plan",     months:1 },
-  "SPORT-VIP-2026":   { plan:"Premium", label:"Premium Plan", months:3 },
-  "SPORT-TRIAL-001":  { plan:"Pro",     label:"7-Day Trial",  months:0 },
-  "SPORTAI-ACCESS":   { plan:"Pro",     label:"Pro Plan",     months:1 },
-  "VIP-MEMBER-2026":  { plan:"Premium", label:"Premium Plan", months:6 },
-  "BETA-TESTER-001":  { plan:"Premium", label:"Beta Access",  months:12 },
-};
-
-const USERS_DB = {
-  john: { password:"password123", name:"John Smithson", email:"john@sportai.demo", plan:"pro", initials:"JS" }
-};
-
-let CURRENT_USER = null;
-let PROMO_VERIFIED = null;
-
-const MATCHES = [
-  {id:1,comp:"Premier League",flag:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",kickoff:"LIVE 73'",status:"live",home:"Man City",away:"Arsenal",hs:2,as:1,hp:58,dp:22,ap:20,ho:1.72,do:3.50,ao:4.80,hf:["W","W","D","W","W"],af:["W","L","W","W","D"],conf:"high",vs:"home",ai:"Man City dominate with 68% possession. Value in Home Win at 1.72 — EV +0.04."},
-  {id:2,comp:"La Liga",flag:"🇪🇸",kickoff:"LIVE 34'",status:"live",home:"Real Madrid",away:"Barcelona",hs:0,as:1,hp:29,dp:24,ap:47,ho:2.10,do:3.20,ao:3.60,hf:["W","W","W","D","L"],af:["W","W","D","W","W"],conf:"med",vs:"away",ai:"Barcelona lead and hold superior form. Away win EV positive at 3.60."},
-  {id:3,comp:"Champions League",flag:"🇪🇺",kickoff:"20:45",status:"upcoming",home:"PSG",away:"Bayern Munich",hs:null,as:null,hp:36,dp:26,ap:38,ho:2.50,do:3.10,ao:2.90,hf:["W","D","W","L","W"],af:["W","W","W","D","W"],conf:"low",vs:"away",ai:"Closely matched. Bayern slight value at 2.90 — model gives 38% vs 34% implied."},
-  {id:4,comp:"Serie A",flag:"🇮🇹",kickoff:"21:00",status:"upcoming",home:"Juventus",away:"Inter Milan",hs:null,as:null,hp:41,dp:30,ap:29,ho:2.30,do:3.00,ao:3.20,hf:["D","W","W","D","W"],af:["W","L","W","W","D"],conf:"med",vs:"home",ai:"Juventus home advantage and form edge. Home win value at 2.30 — EV +0.03."},
-  {id:5,comp:"Bundesliga",flag:"🇩🇪",kickoff:"18:30",status:"upcoming",home:"Dortmund",away:"Leverkusen",hs:null,as:null,hp:44,dp:27,ap:29,ho:2.20,do:3.40,ao:3.10,hf:["W","W","L","W","D"],af:["W","W","W","L","W"],conf:"med",vs:null,ai:"Evenly matched. No strong value detected; monitor odds movement closer to kick-off."},
-  {id:6,comp:"Ligue 1",flag:"🇫🇷",kickoff:"19:00",status:"upcoming",home:"Lyon",away:"Marseille",hs:null,as:null,hp:39,dp:28,ap:33,ho:2.60,do:3.10,ao:2.80,hf:["D","W","D","W","L"],af:["W","D","W","W","D"],conf:"low",vs:null,ai:"Lyon vs Marseille historically tight. Draw market worth monitoring at 3.10."},
-  {id:7,comp:"Premier League",flag:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",kickoff:"LIVE 82'",status:"live",home:"Chelsea",away:"Liverpool",hs:1,as:1,hp:21,dp:44,ap:35,ho:5.20,do:2.40,ao:3.80,hf:["L","D","W","L","D"],af:["W","W","D","W","L"],conf:"med",vs:"draw",ai:"Draw highly probable at 82' with parity. Draw at 2.40 represents value — EV +0.05."},
-  {id:8,comp:"La Liga",flag:"🇪🇸",kickoff:"22:00",status:"upcoming",home:"Atletico",away:"Sevilla",hs:null,as:null,hp:52,dp:25,ap:23,ho:1.90,do:3.60,ao:4.40,hf:["W","W","W","D","W"],af:["D","W","L","D","W"],conf:"high",vs:"home",ai:"Atletico strong home record (W4 D1 L0 last 5). Home win value at 1.90 — EV +0.03."},
-];
-
-const NOTIFICATIONS = [
-  {icon:"⚽",title:"GOAL! Man City 2–1 Arsenal",desc:"Haaland 73' — AI predicted Home Win (58%). Probs updated.",time:"2 min ago",unread:true},
-  {icon:"💎",title:"High Value Bet Found",desc:"Bayern Munich Away vs PSG @ 2.90 — EV +0.04. Kelly stake: £12.80.",time:"8 min ago",unread:true},
-  {icon:"🔔",title:"Match Starting Soon",desc:"Juventus vs Inter Milan kicks off in 30 minutes.",time:"22 min ago",unread:true},
-  {icon:"✅",title:"Prediction Correct",desc:"Real Madrid Win (1.85) confirmed — +£8.50 profit.",time:"2h ago",unread:false},
-  {icon:"📊",title:"Weekly Report Ready",desc:"Your performance report for this week is available.",time:"5h ago",unread:false},
-  {icon:"🤖",title:"AI Model Updated",desc:"DeepMatch v3.2 deployed with improved draw detection.",time:"1d ago",unread:false},
-];
-
-const LEADERBOARD = [
-  {rank:1,init:"JS",bg:"linear-gradient(135deg,#f0a500,#c07d00)",name:"John S.",tag:"@johnsmith",bets:284,acc:"94.2%",profit:"+£3,840",roi:"18.4%",pos:true},
-  {rank:2,init:"MR",bg:"#c0c0c0",name:"Maria R.",tag:"@maria_r",bets:310,acc:"91.8%",profit:"+£2,140",roi:"14.2%",pos:true},
-  {rank:3,init:"DK",bg:"#cd7f32",name:"David K.",tag:"@dkings",bets:198,acc:"93.4%",profit:"+£1,920",roi:"16.1%",pos:true},
-  {rank:4,init:"AL",bg:"#7c5cbf",name:"Alex L.",tag:"@alexL",bets:422,acc:"88.7%",profit:"+£1,540",roi:"11.3%",pos:true},
-  {rank:5,init:"SB",bg:"#e63946",name:"Sophie B.",tag:"@sophieb",bets:167,acc:"90.1%",profit:"+£980",roi:"9.8%",pos:true},
-  {rank:6,init:"TM",bg:"#3a8ef6",name:"Tom M.",tag:"@tommitch",bets:289,acc:"85.2%",profit:"-£120",roi:"-0.4%",pos:false},
-  {rank:7,init:"KA",bg:"#2ec27e",name:"Kenji A.",tag:"@kenji_a",bets:134,acc:"87.6%",profit:"+£640",roi:"8.1%",pos:true},
-];
-
-const HISTORY = [
-  {match:"Man City vs Arsenal",sel:"Man City Win",odds:1.65,stake:10,result:"WON",profit:6.50,date:"Today 16:45"},
-  {match:"Real Madrid vs Barcelona",sel:"Draw",odds:3.20,stake:10,result:"LOST",profit:-10,date:"Today 14:00"},
-  {match:"Bayern vs Dortmund",sel:"Bayern Win",odds:1.85,stake:10,result:"WON",profit:8.50,date:"Yesterday"},
-  {match:"PSG vs Marseille",sel:"PSG Win",odds:1.50,stake:20,result:"WON",profit:10,date:"Yesterday"},
-  {match:"Juventus vs Roma",sel:"Draw",odds:3.00,stake:10,result:"LOST",profit:-10,date:"Mon 21:00"},
-  {match:"Liverpool vs Chelsea",sel:"Liverpool Win",odds:1.72,stake:15,result:"WON",profit:10.80,date:"Mon 17:30"},
-  {match:"Atletico vs Sevilla",sel:"Atletico Win",odds:1.90,stake:10,result:"PENDING",profit:0,date:"Today 22:00"},
-];
-
-// ============================================================
-//  STATE
-// ============================================================
-let betslip = {};
-let dashFilter = "all";
-let predFilter = "all";
-let histFilter = "all";
-
-// ============================================================
-//  AUTH
-// ============================================================
-function switchTab(tab) {
-  document.getElementById("form-login").style.display  = tab==="login"  ? "block" : "none";
-  document.getElementById("form-signup").style.display = tab==="signup" ? "block" : "none";
-  document.getElementById("tab-login").classList.toggle("active",  tab==="login");
-  document.getElementById("tab-signup").classList.toggle("active", tab==="signup");
-}
-
-function togglePw(id, btn) {
-  const inp = document.getElementById(id);
-  if (inp.type === "password") { inp.type = "text";     btn.textContent = "🙈"; }
-  else                         { inp.type = "password"; btn.textContent = "👁";  }
-}
-
-function verifyPromo() {
-  const code = document.getElementById("promo-code").value.trim().toUpperCase();
-  const btn  = document.getElementById("promo-btn");
-  btn.disabled = true;
-  btn.textContent = "…";
-  setTimeout(() => {
-    const match = PROMO_CODES[code];
-    document.getElementById("promo-valid").style.display   = match ? "flex" : "none";
-    document.getElementById("promo-invalid").style.display = match ? "none" : "flex";
-    if (match) {
-      document.getElementById("promo-plan-name").textContent = match.label;
-      PROMO_VERIFIED = { code, ...match };
-    } else {
-      PROMO_VERIFIED = null;
-    }
-    btn.disabled    = false;
-    btn.textContent = "Verify";
-  }, 900);
-}
-
-function handleLogin() {
-  const u = document.getElementById("login-user").value.trim();
-  const p = document.getElementById("login-pass").value;
-  const btn = document.getElementById("login-btn");
-  document.getElementById("login-err").classList.remove("show");
-
-  btn.disabled = true;
-  document.getElementById("login-btn-text").style.display = "none";
-  document.getElementById("login-loading").classList.add("show");
-
-  setTimeout(() => {
-    const user = USERS_DB[u] || Object.values(USERS_DB).find(x=>x.email===u);
-    if (user && user.password === p) {
-      CURRENT_USER = { ...user, username: u.includes("@") ? "john" : u };
-      enterApp();
-    } else {
-      document.getElementById("login-err").classList.add("show");
-      document.getElementById("login-user").classList.add("error");
-      document.getElementById("login-pass").classList.add("error");
-    }
-    btn.disabled = false;
-    document.getElementById("login-btn-text").style.display = "block";
-    document.getElementById("login-loading").classList.remove("show");
-  }, 1000);
-}
-
-function handleSignup() {
-  const fname = document.getElementById("reg-fname").value.trim();
-  const lname = document.getElementById("reg-lname").value.trim();
-  const email = document.getElementById("reg-email").value.trim();
-  const uname = document.getElementById("reg-user").value.trim();
-  const pass  = document.getElementById("reg-pass").value;
-  const terms = document.getElementById("terms-cb").checked;
-  const err   = document.getElementById("signup-err");
-
-  err.style.display = "none";
-
-  if (!PROMO_VERIFIED) {
-    err.textContent = "Please verify your access code first.";
-    err.style.display = "block"; return;
-  }
-  if (!fname||!lname||!email||!uname||!pass) {
-    err.textContent = "Please fill in all fields.";
-    err.style.display = "block"; return;
-  }
-  if (pass.length < 8) {
-    err.textContent = "Password must be at least 8 characters.";
-    err.style.display = "block"; return;
-  }
-  if (!terms) {
-    err.textContent = "Please accept the Terms of Service to continue.";
-    err.style.display = "block"; return;
-  }
-
-  const btn = document.getElementById("signup-btn");
-  btn.disabled = true;
-  document.getElementById("signup-btn-text").style.display = "none";
-  document.getElementById("signup-loading").classList.add("show");
-
-  setTimeout(() => {
-    CURRENT_USER = {
-      name: fname + " " + lname,
-      email,
-      plan: PROMO_VERIFIED.plan,
-      initials: (fname[0] + lname[0]).toUpperCase(),
-      username: uname,
-    };
-    enterApp();
-    btn.disabled = false;
-    document.getElementById("signup-btn-text").style.display = "block";
-    document.getElementById("signup-loading").classList.remove("show");
-  }, 1200);
-}
-
-function enterApp() {
-  document.getElementById("auth-screen").classList.add("hidden");
-  document.getElementById("app").classList.add("show");
-
-  const u = CURRENT_USER;
-  const first = u.name.split(" ")[0];
-  document.getElementById("nav-avatar").textContent   = u.initials || u.name.slice(0,2).toUpperCase();
-  document.getElementById("nav-username").textContent = first;
-  document.getElementById("ud-name").textContent  = u.name;
-  document.getElementById("ud-email").textContent = u.email;
-  document.getElementById("ud-plan").textContent  = u.plan.charAt(0).toUpperCase() + u.plan.slice(1);
-  document.getElementById("set-name").textContent = u.name;
-  document.getElementById("set-email").textContent = u.email;
-  document.getElementById("set-plan").textContent  = u.plan.toUpperCase();
-  document.getElementById("dash-welcome").textContent = first;
-
-  init();
-}
-
-function logout() {
-  CURRENT_USER = null;
-  betslip = {};
-  document.getElementById("app").classList.remove("show");
-  document.getElementById("auth-screen").classList.remove("hidden");
-  switchTab("login");
-  closeAllPanels();
-  showToast("Signed out successfully","info");
-}
-
-// ============================================================
-//  NAVIGATION
-// ============================================================
-function navigateTo(page) {
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  document.querySelectorAll(".nav-item,.mn-item").forEach(n=>n.classList.remove("active"));
-
-  const pg = document.getElementById("page-"+page);
-  if (pg) pg.classList.add("active");
-  document.querySelectorAll(`[data-page="${page}"]`).forEach(n=>n.classList.add("active"));
-
-  closeSidebar();
-  renderPage(page);
-  window.scrollTo(0,0);
-}
-
-document.querySelectorAll(".nav-item[data-page],.mn-item[data-page]").forEach(btn=>{
-  btn.addEventListener("click",()=>navigateTo(btn.dataset.page));
-});
-
-function renderPage(page) {
-  if(page==="dashboard")   renderDashboard();
-  if(page==="predictions") renderPredictions();
-  if(page==="live")        renderLive();
-  if(page==="leaderboard") renderLeaderboard();
-  if(page==="history")     renderHistory();
-  if(page==="insights")    renderInsights();
-  if(page==="statistics")  renderStatistics();
-  if(page==="valuebets")   renderValueBets();
-}
-
-function refreshCurrent() {
-  const a = document.querySelector(".page.active");
-  if(a) renderPage(a.id.replace("page-",""));
-}
-
-// ============================================================
-//  SIDEBAR / MOBILE
-// ============================================================
-document.getElementById("hamburger-btn").addEventListener("click",()=>{
-  document.getElementById("sidebar").classList.add("open");
-  document.getElementById("sidebar-overlay").classList.add("show");
-});
-function closeSidebar() {
-  document.getElementById("sidebar").classList.remove("open");
-  document.getElementById("sidebar-overlay").classList.remove("show");
-}
-
-// ============================================================
-//  USER DROPDOWN
-// ============================================================
-document.getElementById("user-menu-btn").addEventListener("click",e=>{
-  e.stopPropagation();
-  document.getElementById("user-dropdown").classList.toggle("open");
-});
-document.addEventListener("click",()=>document.getElementById("user-dropdown").classList.remove("open"));
-function closeDropdown(){document.getElementById("user-dropdown").classList.remove("open")}
-
-// ============================================================
-//  PANELS (betslip / notifications)
-// ============================================================
-document.getElementById("betslip-btn").addEventListener("click",()=>togglePanel("betslip-panel"));
-document.getElementById("bp-close").addEventListener("click",()=>closeAllPanels());
-document.getElementById("notif-btn").addEventListener("click",()=>{
-  togglePanel("notif-panel");
-  document.getElementById("notif-dot").style.display="none";
-  document.getElementById("mn-dot-pred").classList.remove("show");
-});
-document.getElementById("np-close").addEventListener("click",()=>closeAllPanels());
-document.getElementById("panel-overlay").addEventListener("click",closeAllPanels);
-
-function togglePanel(id) {
-  const isOpen = document.getElementById(id).classList.contains("open");
-  closeAllPanels();
-  if(!isOpen) {
-    document.getElementById(id).classList.add("open");
-    document.getElementById("panel-overlay").classList.add("show");
-  }
-}
-function closeAllPanels() {
-  document.getElementById("betslip-panel").classList.remove("open");
-  document.getElementById("notif-panel").classList.remove("open");
-  document.getElementById("panel-overlay").classList.remove("show");
-}
-
-// ============================================================
-//  SEARCH
-// ============================================================
-function openSearch(){document.getElementById("search-overlay").classList.add("show");document.getElementById("search-overlay-inp").focus();}
-function closeSearch(e){if(!e||e.target===document.getElementById("search-overlay"))document.getElementById("search-overlay").classList.remove("show")}
-function liveSearch(q){
-  const r=document.getElementById("search-results");
-  if(!q){r.innerHTML="";return;}
-  const hits=MATCHES.filter(m=>m.home.toLowerCase().includes(q.toLowerCase())||m.away.toLowerCase().includes(q.toLowerCase())||m.comp.toLowerCase().includes(q.toLowerCase()));
-  r.innerHTML=hits.length?hits.map(m=>`<div class="search-result" onclick="closeSearch();navigateTo('predictions')">${m.flag} <strong>${m.home}</strong> vs <strong>${m.away}</strong> <span style="color:var(--text-3);font-size:11px">— ${m.comp}</span></div>`).join(""):`<div class="search-empty">No matches found for "<strong>${q}</strong>"</div>`;
-}
-document.getElementById("search-inp").addEventListener("input",e=>liveSearch(e.target.value));
-
-// ============================================================
-//  HELPERS
-// ============================================================
-function ev(m) {
-  const evH=m.hp/100-1/m.ho, evD=m.dp/100-1/m.do, evA=m.ap/100-1/m.ao;
-  const best=Math.max(evH,evD,evA);
-  if(best<=0.01) return null;
-  return best===evH?"home":best===evD?"draw":"away";
-}
-function confCls(m){return m.conf==="high"?"c-high":m.conf==="med"?"c-med":"c-low"}
-function confLbl(m){return m.conf==="high"?"High Confidence":m.conf==="med"?"Medium Confidence":"Low Confidence"}
-function formDot(r){return`<div class="f-dot f${r.toLowerCase()}">${r}</div>`}
-function animBars(el){requestAnimationFrame(()=>{el.querySelectorAll(".prob-fill[data-w]").forEach(e=>e.style.width=e.dataset.w+"%")})}
-
-// ============================================================
-//  RENDER MATCH CARD (table row)
-// ============================================================
-function renderMatchCard(m,i=0){
-  const bv=ev(m), sel=betslip[m.id];
-  const hs=m.status==="live"&&m.hs!==null?`<div class="team-s">${m.hs}</div>`:"";
-  const as_=m.status==="live"&&m.as!==null?`<div class="team-s">${m.as}</div>`:"";
-  const vts={home:"vt-h",draw:"vt-d",away:"vt-a"};
-  const vls={home:`1 ${m.home.split(" ")[0]}`,draw:"X Draw",away:`2 ${m.away.split(" ")[0]}`};
-  const ob=(type,lbl,odds)=>{
-    const isBest=bv===type,isSel=sel&&sel.type===type;
-    return`<div class="odds-cell"><button class="odds-btn${isBest?" best":""}${isSel?" sel":""}" onclick="toggleBet(${m.id},'${type}',${odds},'${m.home}','${m.away}')"><span class="o-type">${lbl}</span><span class="o-num">${odds.toFixed(2)}</span></button></div>`;
-  };
-  const strip=sel?`<div class="bs-strip"><span class="bs-lbl">Selected</span><span class="bs-sel"><strong>${sel.type==="home"?m.home:sel.type==="away"?m.away:"Draw"}</strong> — ${m.home} v ${m.away}</span><span class="bs-odds">@ ${sel.odds.toFixed(2)}</span><button class="bs-add" onclick="openBetslip()">+ Betslip</button></div>`:"";
-  return`<div class="match-card${m.status==="live"?" live-card":bv?" value-card":""}" style="animation-delay:${i*.04}s"><div class="match-row">
-    <div class="match-info"><div class="match-meta"><div class="match-time${m.status==="live"?" live":""}">${m.kickoff}</div><div class="match-comp">${m.flag} ${m.comp}</div></div>
-    <div class="teams"><div class="team-r"><div class="team-n">${m.home}</div>${hs}</div><div class="team-r"><div class="team-n">${m.away}</div>${as_}</div></div></div>
-    <div class="prob-col">
-      <div class="prob-r"><span class="prob-l">1</span><div class="prob-track"><div class="prob-fill pf-h" data-w="${m.hp}" style="width:0%"></div></div><span class="prob-pct pct-h">${m.hp}%</span></div>
-      <div class="prob-r"><span class="prob-l">X</span><div class="prob-track"><div class="prob-fill pf-d" data-w="${m.dp}" style="width:0%"></div></div><span class="prob-pct pct-d">${m.dp}%</span></div>
-      <div class="prob-r"><span class="prob-l">2</span><div class="prob-track"><div class="prob-fill pf-a" data-w="${m.ap}" style="width:0%"></div></div><span class="prob-pct pct-a">${m.ap}%</span></div>
-    </div>
-    ${ob("home","1",m.ho)}${ob("draw","X",m.do)}${ob("away","2",m.ao)}
-    <div class="val-cell">${bv?`<span class="val-tag ${vts[bv]}">${vls[bv]}</span>`:`<span style="color:var(--text-3)">—</span>`}</div>
-  </div>${strip}</div>`;
-}
-
-// ============================================================
-//  RENDER PREDICTION CARD (expanded)
-// ============================================================
-function renderPredCard(m,i=0){
-  const bv=ev(m);
-  const bvOdds=bv==="home"?m.ho:bv==="draw"?m.do:m.ao;
-  return`<div class="pred-card" style="animation-delay:${i*.05}s">
-    <div class="pc-hd">
-      <div style="display:flex;align-items:center;gap:8px"><span class="comp-tag${m.status==="live"?" live":""}">${m.flag} ${m.comp}</span><span style="font-size:11px;color:var(--text-3)">${m.kickoff}</span></div>
-      <div class="conf-badge ${confCls(m)}"><div class="c-dot"></div>${confLbl(m)}</div>
-    </div>
-    <div class="pc-bd">
-      <div class="vs-row">
-        <div class="vs-team"><div class="vt-name">${m.home}</div><div class="vt-form" style="display:flex;gap:3px;margin-top:5px">${m.hf.map(formDot).join("")}</div></div>
-        <div class="vs-mid"><div class="vs-mid-time">${m.kickoff}</div><div class="vs-mid-vs">VS</div>${m.status==="live"?`<div style="font-size:14px;font-weight:700;color:#fff;margin-top:4px">${m.hs}–${m.as}</div>`:""}</div>
-        <div class="vs-team away"><div class="vt-name">${m.away}</div><div class="vt-form" style="display:flex;gap:3px;margin-top:5px;justify-content:flex-end">${m.af.map(formDot).join("")}</div></div>
-      </div>
-      <div class="probs-row">
-        <div class="prob-seg seg-h${bv==="home"?" seg-best":""}"><div class="ps-lbl">Home Win</div><div class="ps-val">${m.hp}%</div><div class="ps-odds">${m.ho.toFixed(2)}</div></div>
-        <div class="prob-seg seg-d${bv==="draw"?" seg-best":""}"><div class="ps-lbl">Draw</div><div class="ps-val">${m.dp}%</div><div class="ps-odds">${m.do.toFixed(2)}</div></div>
-        <div class="prob-seg seg-a${bv==="away"?" seg-best":""}"><div class="ps-lbl">Away Win</div><div class="ps-val">${m.ap}%</div><div class="ps-odds">${m.ao.toFixed(2)}</div></div>
-      </div>
-      <div class="ai-row"><span class="ai-icon-lbl">🤖</span><strong>AI:</strong> ${m.ai}</div>
-    </div>
-    <div class="pc-ft">
-      <div class="pc-stats">
-        <div class="pc-stat"><strong>${Math.max(m.hp,m.dp,m.ap)}%</strong>AI Confidence</div>
-        <div class="pc-stat"><strong>${m.status==="live"?"In Play":"Pre-Match"}</strong>Status</div>
-        ${bv?`<div class="pc-stat"><strong style="color:var(--green)">+EV</strong>Value Bet</div>`:""}
-      </div>
-      <div style="display:flex;gap:6px">
-        <button class="btn btn-sm btn-outline">📊 H2H</button>
-        ${bv?`<button class="btn btn-sm btn-gold" onclick="toggleBet(${m.id},'${bv}',${bvOdds},'${m.home}','${m.away}')">+ Select</button>`:""}
-      </div>
-    </div>
-  </div>`;
-}
-
-// ============================================================
-//  BETSLIP
-// ============================================================
-function toggleBet(id,type,odds,home,away){
-  const key=String(id);
-  if(betslip[key]&&betslip[key].type===type) delete betslip[key];
-  else betslip[key]={type,odds,home,away,match_id:id};
-  updateBetslipUI(); refreshCurrent();
-}
-function openBetslip(){togglePanel("betslip-panel")}
-
-function updateBetslipUI(){
-  const count=Object.keys(betslip).length;
-  document.getElementById("bp-cnt").textContent=count;
-  const badge=document.getElementById("bs-badge");
-  badge.textContent=count; badge.style.display=count?"block":"none";
-
-  const items=document.getElementById("bp-items"), ft=document.getElementById("bp-ft");
-  if(!count){items.innerHTML='<div class="bp-empty"><div class="bp-empty-ico">🎫</div><p style="font-size:13px;color:var(--text-2)">No selections yet.<br>Click any odds to add.</p></div>';ft.style.display="none";return;}
-  items.innerHTML=Object.entries(betslip).map(([id,s])=>{
-    const m=MATCHES.find(x=>String(x.id)===id);
-    const lbl=s.type==="home"?s.home:s.type==="away"?s.away:"Draw";
-    return`<div class="bp-item"><div class="bp-match">${m?m.comp:""} — ${s.home} v ${s.away}</div><div class="bp-sel">${lbl}</div><div class="bp-odds">${s.odds.toFixed(2)}</div><button class="bp-rm" onclick="removeBet('${id}')">✕</button></div>`;
-  }).join("");
-  ft.style.display="block";
-  calcTotals();
-}
-function removeBet(id){delete betslip[String(id)];updateBetslipUI();refreshCurrent();}
-function calcTotals(){
-  const stake=parseFloat(document.getElementById("bp-stake").value)||10;
-  const totalOdds=Object.values(betslip).reduce((a,s)=>a*s.odds,1);
-  const ret=stake*totalOdds;
-  document.getElementById("bp-total-odds").textContent=totalOdds.toFixed(2);
-  document.getElementById("bp-return").textContent="£"+ret.toFixed(2);
-  document.getElementById("bp-profit").textContent="£"+(ret-stake).toFixed(2);
-}
-document.getElementById("bp-stake").addEventListener("input",calcTotals);
-document.getElementById("bp-place").addEventListener("click",()=>{
-  if(!Object.keys(betslip).length) return;
-  betslip={}; updateBetslipUI(); refreshCurrent(); closeAllPanels();
-  showToast("✓ Bet placed successfully!","success");
-});
-
-// ============================================================
-//  PAGE RENDERS
-// ============================================================
-function renderDashboard(){
-  let list=[...MATCHES];
-  if(dashFilter==="live") list=list.filter(m=>m.status==="live");
-  if(dashFilter==="upcoming") list=list.filter(m=>m.status!=="live");
-  const c=document.getElementById("dash-matches");
-  c.innerHTML=list.slice(0,5).map((m,i)=>renderMatchCard(m,i)).join("");
-  animBars(c);
-
-  const vals=MATCHES.filter(m=>ev(m)).slice(0,4);
-  const vl=document.getElementById("top-val-list");
-  vl.innerHTML=vals.map(m=>{
-    const bv=ev(m), odds=bv==="home"?m.ho:bv==="draw"?m.do:m.ao;
-    const lbl=bv==="home"?m.home:bv==="away"?m.away:"Draw";
-    return`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid var(--border);gap:10px">
-      <div><div style="font-size:12px;font-weight:600">${m.home} v ${m.away}</div><div style="font-size:10px;color:var(--text-3)">${m.comp}</div></div>
-      <div style="text-align:center"><div style="font-size:9px;color:var(--green);font-weight:700;text-transform:uppercase;letter-spacing:.5px">${lbl}</div><div style="font-family:var(--f-display);font-size:20px;color:var(--gold);letter-spacing:.5px">${odds.toFixed(2)}</div></div>
-      <button class="btn btn-sm btn-green" onclick="toggleBet(${m.id},'${bv}',${odds},'${m.home}','${m.away}')">+ Add</button>
-    </div>`;
-  }).join("")||'<div style="padding:20px;text-align:center;color:var(--text-3)">No value bets right now</div>';
-
-  const vals7=[81,88,92,86,95,97,94];
-  const pc=document.getElementById("perf-chart");
-  if(pc) pc.innerHTML=vals7.map(v=>`<div class="bar-col"><div class="bar-fill" style="height:${v}%;background:${v>=90?"var(--green)":v>=85?"var(--gold)":"var(--blue)"}"></div></div>`).join("");
-
-  const live=MATCHES.filter(m=>m.status==="live").length;
-  const vcount=MATCHES.filter(m=>ev(m)).length;
-  document.getElementById("t-total").textContent=MATCHES.length;
-  document.getElementById("t-live").textContent=live;
-  document.getElementById("t-val").textContent=vcount;
-  document.getElementById("live-badge").textContent=live;
-  document.getElementById("val-badge").textContent=vcount;
-  document.getElementById("vb-badge").textContent=vcount;
-  document.getElementById("dash-live").textContent=live;
-  document.getElementById("dash-value").textContent=vcount;
-  document.getElementById("vb-count").textContent=vcount;
-  document.getElementById("ticker-time").textContent="Updated "+new Date().toLocaleTimeString();
-  if(live>0) document.getElementById("mn-dot-live").classList.add("show");
-}
-
-document.querySelectorAll("[data-df]").forEach(btn=>btn.addEventListener("click",()=>{
-  document.querySelectorAll("[data-df]").forEach(b=>b.classList.remove("active"));
-  btn.classList.add("active"); dashFilter=btn.dataset.df; renderDashboard();
-}));
-
-function renderPredictions(){
-  let list=[...MATCHES];
-  if(predFilter==="live") list=list.filter(m=>m.status==="live");
-  if(predFilter==="upcoming") list=list.filter(m=>m.status!=="live");
-  if(predFilter==="value") list=list.filter(m=>ev(m));
-  if(predFilter==="high") list=list.filter(m=>m.conf==="high");
-  const sort=document.getElementById("pred-sort").value;
-  if(sort==="conf") list.sort((a,b)=>Math.max(b.hp,b.dp,b.ap)-Math.max(a.hp,a.dp,a.ap));
-  const c=document.getElementById("pred-container");
-  c.innerHTML=list.length?list.map((m,i)=>renderPredCard(m,i)).join(""):`<div class="empty-st"><div class="empty-ico">📭</div><p>No predictions match this filter.</p></div>`;
-}
-document.querySelectorAll("[data-pf]").forEach(btn=>btn.addEventListener("click",()=>{
-  document.querySelectorAll("[data-pf]").forEach(b=>b.classList.remove("active"));
-  btn.classList.add("active"); predFilter=btn.dataset.pf; renderPredictions();
-}));
-document.getElementById("pred-sort").addEventListener("change",renderPredictions);
-
-function renderValueBets(){
-  const vals=MATCHES.filter(m=>ev(m));
-  const c=document.getElementById("vb-container");
-  c.innerHTML=vals.length?vals.map((m,i)=>{
-    const bv=ev(m), odds=bv==="home"?m.ho:bv==="draw"?m.do:m.ao;
-    const prob=(bv==="home"?m.hp:bv==="draw"?m.dp:m.ap)/100;
-    const evVal=((prob*(odds-1)-(1-prob))*100).toFixed(1);
-    const kelly=Math.max(0,(prob*(odds-1)-(1-prob))/(odds-1)*500*0.25).toFixed(2);
-    return renderPredCard(m,i)+`<div style="display:flex;gap:8px;padding:0 18px 14px;margin-top:-6px;flex-wrap:wrap">
-      <div class="badge badge-green">EV +${evVal}%</div>
-      <div class="badge badge-blue">Kelly £${kelly}</div>
-      <div class="badge badge-gold">${bv==="home"?m.home:bv==="away"?m.away:"Draw"} @ ${odds.toFixed(2)}</div>
-    </div>`;
-  }).join(""):`<div class="empty-st"><div class="empty-ico">🔍</div><p>No value bets detected right now.</p></div>`;
-}
-
-function renderLive(){
-  const live=MATCHES.filter(m=>m.status==="live");
-  const c=document.getElementById("live-container");
-  c.innerHTML=live.length?live.map((m,i)=>renderPredCard(m,i)).join(""):`<div class="empty-st"><div class="empty-ico">📡</div><p>No live matches right now. Check back soon.</p></div>`;
-}
-
-function renderLeaderboard(){
-  document.getElementById("lb-rows").innerHTML=LEADERBOARD.map(u=>{
-    const rc=u.rank===1?"r1":u.rank===2?"r2":u.rank===3?"r3":"";
-    return`<div class="lb-row">
-      <div class="lb-rank ${rc}">${u.rank}</div>
-      <div class="lb-user"><div class="lb-av" style="background:${u.bg};color:${u.rank<=3?"#111":"#fff"}">${u.init}</div><div><div class="lb-name">${u.name}</div><div class="lb-tag">${u.tag}</div></div></div>
-      <div class="lb-cell">${u.bets}</div>
-      <div class="lb-cell acc">${u.acc}</div>
-      <div class="lb-cell ${u.pos?"profit":"loss"}">${u.profit}</div>
-      <div class="lb-cell"><span class="roi-pill ${u.pos?"roi-pos":"roi-neg"}">${u.roi}</span></div>
-    </div>`;
-  }).join("");
-}
-
-function renderHistory(){
-  let list=HISTORY;
-  if(histFilter==="won") list=list.filter(h=>h.result==="WON");
-  if(histFilter==="lost") list=list.filter(h=>h.result==="LOST");
-  if(histFilter==="pending") list=list.filter(h=>h.result==="PENDING");
-  const rows=document.getElementById("history-rows");
-  rows.innerHTML=list.map(h=>{
-    const won=h.result==="WON", pending=h.result==="PENDING";
-    const pill=won?"rp-won":pending?"rp-pending":"rp-lost";
-    const profStr=h.profit>0?`+£${h.profit.toFixed(2)}`:h.profit<0?`-£${Math.abs(h.profit).toFixed(2)}`:"-";
-    return`<div class="hist-row">
-      <div class="hr-main"><div class="hr-match">${h.match}</div><div class="hr-sel" style="margin-top:2px">${h.sel} — <span style="color:var(--text-3)">${h.date}</span></div></div>
-      <div style="text-align:center"><div class="hr-odds">${h.odds.toFixed(2)}</div><div class="hr-stake">£${h.stake} stake</div></div>
-      <div class="hr-result"><span class="result-pill ${pill}">${h.result}</span><div class="hr-profit" style="color:${won?"var(--green)":pending?"var(--gold)":"var(--red)"}">${profStr}</div></div>
-    </div>`;
-  }).join("");
-}
-document.querySelectorAll("[data-hf]").forEach(btn=>btn.addEventListener("click",()=>{
-  document.querySelectorAll("[data-hf]").forEach(b=>b.classList.remove("active"));
-  btn.classList.add("active"); histFilter=btn.dataset.hf; renderHistory();
-}));
-
-function renderInsights(){
-  const lv=[3,4,2,5,4,3,5,4,1,5,3,4,5,2,4,5,4,3,5,4,3,4,5,5,5,4,3,5,4,4,5,5,3,4,5,5,4,3,5,4,3,4,5,5,5,4,3,5,4,4];
-  const hm=document.getElementById("heatmap");
-  if(hm) hm.innerHTML=lv.map((l,i)=>`<div class="hm-cell hm-${l}" title="Day ${i+1}: ${[0,72,80,85,90,95,99][l]}%">${[0,"","","","","",99][l]||""}</div>`).join("");
-}
-
-function renderStatistics(){
-  const m=[89,91,90,92,93,94,94], mx=Math.max(...m);
-  const mc=document.getElementById("monthly-chart");
-  if(mc) mc.innerHTML=m.map(v=>`<div class="bar-col" style="height:120px;justify-content:flex-end"><div class="bar-fill" style="height:${v/mx*100}%;background:var(--blue);width:100%"></div></div>`).join("");
-}
-
-// ============================================================
-//  NOTIFICATIONS
-// ============================================================
-function renderNotifications(){
-  document.getElementById("notif-list").innerHTML=NOTIFICATIONS.map(n=>`
-    <div class="notif-item${n.unread?" unread":""}">
-      <div class="ni-icon">${n.icon}</div>
-      <div class="ni-body"><div class="ni-title">${n.title}</div><div class="ni-desc">${n.desc}</div><div class="ni-time">${n.time}</div></div>
-    </div>`).join("");
-}
-
-// ============================================================
-//  LIVE SIMULATION
-// ============================================================
-function simulateLive(){
-  setInterval(()=>{
-    const live=MATCHES.filter(m=>m.status==="live");
-    if(!live.length) return;
-    const m=live[Math.floor(Math.random()*live.length)];
-    if(Math.random()<0.12){
-      const scorer=Math.random()<0.55?"home":"away";
-      if(scorer==="home"){m.hs++;m.hp=Math.min(85,m.hp+Math.floor(Math.random()*8+3));m.ap=Math.max(5,m.ap-Math.floor(Math.random()*5+2));m.dp=Math.max(5,100-m.hp-m.ap);}
-      else{m.as++;m.ap=Math.min(85,m.ap+Math.floor(Math.random()*8+3));m.hp=Math.max(5,m.hp-Math.floor(Math.random()*5+2));m.dp=Math.max(5,100-m.hp-m.ap);}
-      showToast(`⚽ GOAL! ${m.home} ${m.hs}–${m.as} ${m.away}`,"goal");
-      refreshCurrent();
-    }
-    const tm=m.kickoff.match(/LIVE (\d+)'/);
-    if(tm){const min=Math.min(90,parseInt(tm[1])+Math.floor(Math.random()*2+1));m.kickoff=`LIVE ${min}'`;if(min>=90){m.status="finished";m.kickoff="FT";}refreshCurrent();}
-  },28000);
-}
-
-// ============================================================
-//  TOAST
-// ============================================================
-function showToast(msg,type=""){
-  const t=document.getElementById("toast");
-  t.textContent=msg; t.className="toast"+(type?" "+type:"");
-  t.classList.add("show"); clearTimeout(t._t);
-  t._t=setTimeout(()=>t.classList.remove("show"),3200);
-}
-
-// ============================================================
-//  INIT
-// ============================================================
-function init(){
-  renderNotifications();
-  renderDashboard();
-  simulateLive();
-  setInterval(()=>{document.getElementById("ticker-time").textContent="Updated "+new Date().toLocaleTimeString();},30000);
-}
-
-// Allow Enter key on login form
-document.addEventListener("keydown",e=>{
-  if(e.key==="Enter"&&document.getElementById("auth-screen")&&!document.getElementById("auth-screen").classList.contains("hidden")){
-    if(document.getElementById("form-login").style.display!=="none") handleLogin();
-    else handleSignup();
-  }
-  if(e.key==="Escape") closeSearch();
-});
-</script>
+<script src="dashboard.js"></script>
 </body>
 </html>

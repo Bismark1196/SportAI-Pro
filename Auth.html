@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SportAI — Login</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold: #f5c518;
+    --gold-dim: #c9a214;
+    --red: #e53935;
+    --green: #00e676;
+    --blue: #2979ff;
+    --purple: #7c4dff;
+    --bg-deep: #070a0f;
+    --bg-card: #0e1420;
+    --bg-input: #151d2e;
+    --border: rgba(255,255,255,0.08);
+    --text-1: #ffffff;
+    --text-2: #a0aec0;
+    --text-3: #4a5568;
+    --f-cond: 'Barlow Condensed', sans-serif;
+    --f-body: 'Barlow', sans-serif;
+  }
+
+  body {
+    font-family: var(--f-body);
+    background: var(--bg-deep);
+    color: var(--text-1);
+    min-height: 100vh;
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* BG ANIMATED GRID */
+  .bg-grid {
+    position: fixed; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(245,197,24,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(245,197,24,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridDrift 20s linear infinite;
+  }
+  @keyframes gridDrift { from { background-position: 0 0; } to { background-position: 60px 60px; } }
+
+  .bg-orb {
+    position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none;
+  }
+  .bg-orb-1 { width: 500px; height: 500px; background: rgba(245,197,24,0.06); top: -100px; left: -100px; animation: orbFloat 8s ease-in-out infinite; }
+  .bg-orb-2 { width: 400px; height: 400px; background: rgba(41,121,255,0.05); bottom: -100px; right: -100px; animation: orbFloat 10s ease-in-out infinite reverse; }
+  .bg-orb-3 { width: 300px; height: 300px; background: rgba(124,77,255,0.04); top: 50%; left: 50%; animation: orbFloat 12s ease-in-out infinite; }
+  @keyframes orbFloat {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-30px) scale(1.05); }
+  }
+
+  /* LEFT PANEL */
+  .left-panel {
+    flex: 0 0 55%;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 60px;
+    border-right: 1px solid var(--border);
+  }
+
+  .brand-logo {
+    font-family: var(--f-cond);
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    margin-bottom: 60px;
+  }
+  .brand-logo span { color: var(--gold); }
+
+  .left-headline {
+    font-family: var(--f-cond);
+    font-size: clamp(42px, 5vw, 72px);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -2px;
+    margin-bottom: 24px;
+  }
+  .left-headline .hl-gold { color: var(--gold); display: block; }
+  .left-headline .hl-outline {
+    -webkit-text-stroke: 2px rgba(255,255,255,0.3);
+    color: transparent;
+    display: block;
+  }
+
+  .left-sub {
+    color: var(--text-2);
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 420px;
+    margin-bottom: 48px;
+  }
+
+  .stats-pills {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 48px;
+  }
+  .stat-pill {
+    background: rgba(245,197,24,0.08);
+    border: 1px solid rgba(245,197,24,0.2);
+    border-radius: 100px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sp-val { font-family: var(--f-cond); font-size: 18px; font-weight: 800; color: var(--gold); }
+  .sp-lbl { font-size: 12px; color: var(--text-2); }
+
+  .testimonial {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold);
+    border-radius: 8px;
+    padding: 20px 24px;
+    max-width: 480px;
+  }
+  .test-text { font-size: 14px; color: var(--text-2); line-height: 1.6; font-style: italic; margin-bottom: 12px; }
+  .test-author { display: flex; align-items: center; gap: 10px; }
+  .test-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--gold); color: #111; font-family: var(--f-cond); font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+  .test-name { font-size: 12px; font-weight: 600; }
+  .test-info { font-size: 11px; color: var(--text-3); }
+  .stars { color: var(--gold); font-size: 11px; margin-bottom: 2px; }
+
+  /* RIGHT PANEL (FORM) */
+  .right-panel {
+    flex: 1;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 48px;
+  }
+
+  .auth-box {
+    width: 100%;
+    max-width: 420px;
+  }
+
+  .auth-tabs {
+    display: flex;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 32px;
+  }
+  .auth-tab {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    font-family: var(--f-cond);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    border-radius: 9px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--text-2);
+    transition: all 0.2s;
+  }
+  .auth-tab.active {
+    background: var(--gold);
+    color: #111;
+    box-shadow: 0 4px 15px rgba(245,197,24,0.3);
+  }
+
+  .form-panel { display: none; animation: fadeUp 0.3s ease; }
+  .form-panel.active { display: block; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .form-title {
+    font-family: var(--f-cond);
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+  .form-sub { font-size: 13px; color: var(--text-2); margin-bottom: 28px; }
+
+  .field-group { margin-bottom: 16px; }
+  .field-label { display: block; font-size: 12px; font-weight: 600; color: var(--text-2); margin-bottom: 6px; letter-spacing: 0.5px; text-transform: uppercase; }
+
+  .field-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .field-icon {
+    position: absolute;
+    left: 14px;
+    font-size: 16px;
+    pointer-events: none;
+    opacity: 0.5;
+  }
+  .field-input {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-1);
+    font-family: var(--f-body);
+    font-size: 14px;
+    padding: 12px 14px 12px 42px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .field-input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(245,197,24,0.12);
+  }
+  .field-input::placeholder { color: var(--text-3); }
+
+  .eye-btn {
+    position: absolute; right: 12px;
+    background: none; border: none; cursor: pointer;
+    color: var(--text-3); font-size: 16px;
+    transition: color 0.2s;
+  }
+  .eye-btn:hover { color: var(--text-2); }
+
+  /* PROMO CODE SECTION */
+  .promo-section {
+    background: linear-gradient(135deg, rgba(245,197,24,0.06), rgba(124,77,255,0.06));
+    border: 1px dashed rgba(245,197,24,0.3);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .promo-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .promo-icon { font-size: 18px; }
+  .promo-title { font-family: var(--f-cond); font-size: 14px; font-weight: 700; color: var(--gold); }
+  .promo-sub { font-size: 11px; color: var(--text-2); flex: 1; }
+  .promo-input-row { display: flex; gap: 8px; }
+  .promo-input {
+    flex: 1;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-1);
+    font-family: var(--f-cond);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 10px 12px;
+    outline: none;
+    text-transform: uppercase;
+    transition: border-color 0.2s;
+  }
+  .promo-input:focus { border-color: var(--gold); }
+  .promo-input::placeholder { color: var(--text-3); letter-spacing: 1px; font-weight: 400; }
+  .promo-apply-btn {
+    background: var(--gold);
+    color: #111;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-family: var(--f-cond);
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .promo-apply-btn:hover { background: var(--gold-dim); transform: translateY(-1px); }
+  .promo-status { font-size: 11px; margin-top: 6px; display: none; }
+  .promo-status.valid { color: var(--green); display: block; }
+  .promo-status.invalid { color: var(--red); display: block; }
+  .promo-required-notice {
+    background: rgba(229, 57, 53, 0.1);
+    border: 1px solid rgba(229, 57, 53, 0.3);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 12px;
+    color: #ef9a9a;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .grid-2-form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .terms-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .terms-checkbox { width: 16px; height: 16px; accent-color: var(--gold); margin-top: 2px; flex-shrink: 0; cursor: pointer; }
+  .terms-text { font-size: 12px; color: var(--text-2); line-height: 1.5; }
+  .terms-text a { color: var(--gold); text-decoration: none; }
+  .terms-text a:hover { text-decoration: underline; }
+
+  .submit-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+    color: #111;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-family: var(--f-cond);
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .submit-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(245,197,24,0.35); }
+  .submit-btn:hover::after { opacity: 1; }
+  .submit-btn:active { transform: translateY(0); }
+  .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  .divider { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .divider-line { flex: 1; height: 1px; background: var(--border); }
+  .divider-text { font-size: 12px; color: var(--text-3); }
+
+  .social-btns { display: flex; gap: 10px; margin-bottom: 24px; }
+  .social-btn {
+    flex: 1;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-2);
+    transition: all 0.2s;
+    font-family: var(--f-body);
+  }
+  .social-btn:hover { border-color: rgba(255,255,255,0.2); color: var(--text-1); background: rgba(255,255,255,0.04); }
+  .social-btn img { width: 16px; height: 16px; }
+
+  .forgot-link { display: block; text-align: right; font-size: 12px; color: var(--gold); text-decoration: none; margin-bottom: 20px; }
+  .forgot-link:hover { text-decoration: underline; }
+
+  .error-msg {
+    background: rgba(229,57,53,0.1);
+    border: 1px solid rgba(229,57,53,0.3);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 12px;
+    color: #ef9a9a;
+    margin-bottom: 16px;
+    display: none;
+  }
+  .error-msg.show { display: flex; gap: 8px; align-items: center; }
+
+  .success-state {
+    text-align: center;
+    padding: 40px 20px;
+    display: none;
+  }
+  .success-state.show { display: block; }
+  .success-icon { font-size: 56px; margin-bottom: 16px; }
+  .success-title { font-family: var(--f-cond); font-size: 28px; font-weight: 800; margin-bottom: 8px; color: var(--green); }
+  .success-sub { font-size: 14px; color: var(--text-2); margin-bottom: 24px; line-height: 1.6; }
+
+  .loading-btn { display: inline-flex; align-items: center; gap: 8px; }
+  .btn-spinner { width: 16px; height: 16px; border: 2px solid rgba(0,0,0,0.3); border-top-color: #111; border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Password strength */
+  .pw-strength { margin-top: 6px; }
+  .pw-strength-bar { height: 3px; border-radius: 2px; background: var(--border); overflow: hidden; margin-bottom: 4px; }
+  .pw-strength-fill { height: 100%; border-radius: 2px; transition: width 0.3s, background 0.3s; width: 0%; }
+  .pw-strength-text { font-size: 10px; color: var(--text-3); }
+
+  /* FORGOT PASSWORD */
+  .forgot-panel {
+    display: none;
+    animation: fadeUp 0.3s ease;
+  }
+  .forgot-panel.show { display: block; }
+  .back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--gold); cursor: pointer; margin-bottom: 24px; background: none; border: none; font-family: var(--f-body); }
+  .back-link:hover { text-decoration: underline; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .left-panel { display: none; }
+    .right-panel { padding: 32px 24px; }
+    body { overflow: auto; }
+  }
+  @media (max-width: 480px) {
+    .right-panel { padding: 24px 16px; }
+    .grid-2-form { grid-template-columns: 1fr; }
+    .social-btns { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+<div class="bg-orb bg-orb-3"></div>
+
+<!-- LEFT PANEL -->
+<div class="left-panel">
+  <div class="brand-logo">Sport<span>AI</span></div>
+
+  <h1 class="left-headline">
+    <span class="hl-gold">AI-Powered</span>
+    <span>Match</span>
+    <span class="hl-outline">Predictions</span>
+  </h1>
+
+  <p class="left-sub">
+    Professional-grade sports analytics with 94.2% accuracy. Covering 47 leagues worldwide with real-time data and expert AI models.
+  </p>
+
+  <div class="stats-pills">
+    <div class="stat-pill"><span class="sp-val">94.2%</span><span class="sp-lbl">AI Accuracy</span></div>
+    <div class="stat-pill"><span class="sp-val">47</span><span class="sp-lbl">Leagues</span></div>
+    <div class="stat-pill"><span class="sp-val">+18.4%</span><span class="sp-lbl">Avg ROI</span></div>
+    <div class="stat-pill"><span class="sp-val">Live</span><span class="sp-lbl">Real-time Data</span></div>
+  </div>
+
+  <div class="testimonial">
+    <div class="stars">★★★★★</div>
+    <p class="test-text">"SportAI completely transformed my approach to sports betting. The AI predictions are incredibly accurate and the value bet alerts have boosted my ROI significantly."</p>
+    <div class="test-author">
+      <div class="test-avatar">MK</div>
+      <div>
+        <div class="test-name">Marcus K.</div>
+        <div class="test-info">Pro Member · London, UK</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="right-panel">
+  <div class="auth-box">
+
+    <!-- TABS -->
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Sign In</button>
+      <button class="auth-tab" id="tab-signup" onclick="switchTab('signup')">Create Account</button>
+    </div>
+
+    <!-- ERROR MSG -->
+    <div class="error-msg" id="error-msg">⚠️ <span id="error-text"></span></div>
+
+    <!-- ===== LOGIN FORM ===== -->
+    <div class="form-panel active" id="form-login">
+      <div class="form-title">Welcome back 👋</div>
+      <div class="form-sub">Sign in to your SportAI account to continue.</div>
+
+      <div class="field-group">
+        <label class="field-label">Email Address</label>
+        <div class="field-wrap">
+          <span class="field-icon">✉️</span>
+          <input type="email" class="field-input" id="login-email" placeholder="you@example.com" autocomplete="email">
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Password</label>
+        <div class="field-wrap">
+          <span class="field-icon">🔒</span>
+          <input type="password" class="field-input" id="login-pass" placeholder="Enter your password" autocomplete="current-password">
+          <button class="eye-btn" onclick="togglePw('login-pass', this)" type="button">👁</button>
+        </div>
+      </div>
+
+      <a href="#" class="forgot-link" onclick="showForgot(); return false;">Forgot password?</a>
+
+      <button class="submit-btn" id="login-btn" onclick="handleLogin()">SIGN IN TO SPORTAI</button>
+
+      <div class="divider"><div class="divider-line"></div><span class="divider-text">OR CONTINUE WITH</span><div class="divider-line"></div></div>
+
+      <div class="social-btns">
+        <button class="social-btn" onclick="socialAuth('Google')">
+          <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Google
+        </button>
+        <button class="social-btn" onclick="socialAuth('Apple')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98l-.09.06c-.22.14-2.19 1.28-2.17 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.73M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+          Apple
+        </button>
+      </div>
+
+      <div style="text-align:center;font-size:12px;color:var(--text-3)">
+        Don't have an account? <a href="#" style="color:var(--gold);text-decoration:none" onclick="switchTab('signup')">Create one free</a>
+      </div>
+    </div>
+
+    <!-- ===== SIGNUP FORM ===== -->
+    <div class="form-panel" id="form-signup">
+      <div class="form-title">Join SportAI 🚀</div>
+      <div class="form-sub">A valid promo code is required to create your account.</div>
+
+      <div class="promo-required-notice">
+        🔑 Access is currently by invitation only. Enter your promo code below to unlock your account.
+      </div>
+
+      <!-- PROMO CODE -->
+      <div class="promo-section">
+        <div class="promo-header">
+          <span class="promo-icon">🎟️</span>
+          <div>
+            <div class="promo-title">Promo / Access Code</div>
+            <div class="promo-sub">Enter the code you received to get access</div>
+          </div>
+        </div>
+        <div class="promo-input-row">
+          <input type="text" class="promo-input" id="promo-code" placeholder="SPORT-XXXX-XXXX" maxlength="20" oninput="resetPromoStatus()">
+          <button class="promo-apply-btn" onclick="applyPromo()">APPLY</button>
+        </div>
+        <div class="promo-status" id="promo-status"></div>
+      </div>
+
+      <div class="grid-2-form">
+        <div class="field-group">
+          <label class="field-label">First Name</label>
+          <div class="field-wrap">
+            <span class="field-icon">👤</span>
+            <input type="text" class="field-input" id="su-fname" placeholder="John" autocomplete="given-name">
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Last Name</label>
+          <div class="field-wrap">
+            <span class="field-icon">👤</span>
+            <input type="text" class="field-input" id="su-lname" placeholder="Smith" autocomplete="family-name">
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Email Address</label>
+        <div class="field-wrap">
+          <span class="field-icon">✉️</span>
+          <input type="email" class="field-input" id="su-email" placeholder="you@example.com" autocomplete="email">
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Password</label>
+        <div class="field-wrap">
+          <span class="field-icon">🔒</span>
+          <input type="password" class="field-input" id="su-pass" placeholder="Min. 8 characters" autocomplete="new-password" oninput="checkPasswordStrength()">
+          <button class="eye-btn" onclick="togglePw('su-pass', this)" type="button">👁</button>
+        </div>
+        <div class="pw-strength" id="pw-strength">
+          <div class="pw-strength-bar"><div class="pw-strength-fill" id="pw-fill"></div></div>
+          <div class="pw-strength-text" id="pw-text"></div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Confirm Password</label>
+        <div class="field-wrap">
+          <span class="field-icon">🔒</span>
+          <input type="password" class="field-input" id="su-pass2" placeholder="Repeat your password" autocomplete="new-password">
+          <button class="eye-btn" onclick="togglePw('su-pass2', this)" type="button">👁</button>
+        </div>
+      </div>
+
+      <div class="terms-row">
+        <input type="checkbox" class="terms-checkbox" id="su-terms">
+        <label for="su-terms" class="terms-text">I agree to SportAI's <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>. I confirm I am 18+ years old and understand that predictions are for informational purposes only.</label>
+      </div>
+
+      <button class="submit-btn" id="signup-btn" onclick="handleSignup()">CREATE MY ACCOUNT →</button>
+
+      <div style="text-align:center;font-size:12px;color:var(--text-3)">
+        Already have an account? <a href="#" style="color:var(--gold);text-decoration:none" onclick="switchTab('login')">Sign in here</a>
+      </div>
+    </div>
+
+    <!-- SUCCESS STATE -->
+    <div class="success-state" id="success-state">
+      <div class="success-icon">🎉</div>
+      <div class="success-title">You're In!</div>
+      <p class="success-sub">Welcome to SportAI. Your account has been created successfully.<br>Redirecting you to your dashboard...</p>
+      <div class="btn-spinner" style="margin: 0 auto; width:24px; height:24px; border:2px solid var(--border); border-top-color: var(--gold);"></div>
+    </div>
+
+    <!-- FORGOT PASSWORD -->
+    <div class="forgot-panel" id="forgot-panel">
+      <button class="back-link" onclick="hideForgot()">← Back to Sign In</button>
+      <div class="form-title">Reset Password 🔑</div>
+      <div class="form-sub">Enter your email and we'll send you a reset link.</div>
+      <div class="field-group">
+        <label class="field-label">Email Address</label>
+        <div class="field-wrap">
+          <span class="field-icon">✉️</span>
+          <input type="email" class="field-input" id="reset-email" placeholder="you@example.com">
+        </div>
+      </div>
+      <button class="submit-btn" onclick="handleReset()">SEND RESET LINK</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Valid promo codes (in production these would be checked server-side)
+  const VALID_PROMOS = {
+    'SPORTAI2026': { plan: 'Pro', discount: '1 month free' },
+    'BETA100': { plan: 'Pro', discount: '100% off first month' },
+    'VIP2026': { plan: 'Premium', discount: '3 months free' },
+    'WELCOME50': { plan: 'Basic', discount: '50% off' },
+    'FRIEND2024': { plan: 'Pro', discount: '2 weeks free trial' },
+  };
+
+  let promoValid = false;
+  let promoData = null;
+
+  function switchTab(tab) {
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    document.getElementById('form-' + tab).classList.add('active');
+    hideError();
+    document.getElementById('success-state').classList.remove('show');
+    document.getElementById('forgot-panel').classList.remove('show');
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('error-msg');
+    document.getElementById('error-text').textContent = msg;
+    el.classList.add('show');
+  }
+  function hideError() {
+    document.getElementById('error-msg').classList.remove('show');
+  }
+
+  function togglePw(id, btn) {
+    const input = document.getElementById(id);
+    input.type = input.type === 'password' ? 'text' : 'password';
+    btn.textContent = input.type === 'password' ? '👁' : '🙈';
+  }
+
+  function applyPromo() {
+    const code = document.getElementById('promo-code').value.trim().toUpperCase();
+    const statusEl = document.getElementById('promo-status');
+
+    if (!code) { showPromoStatus('Please enter a promo code.', false); return; }
+
+    // Simulate async check
+    statusEl.textContent = '⏳ Checking...';
+    statusEl.className = 'promo-status valid';
+
+    setTimeout(() => {
+      if (VALID_PROMOS[code]) {
+        promoValid = true;
+        promoData = VALID_PROMOS[code];
+        showPromoStatus(`✅ Valid code! ${promoData.plan} Plan — ${promoData.discount}`, true);
+        document.getElementById('promo-code').style.borderColor = 'var(--green)';
+      } else {
+        promoValid = false;
+        promoData = null;
+        showPromoStatus('❌ Invalid or expired promo code. Please try again.', false);
+        document.getElementById('promo-code').style.borderColor = 'var(--red)';
+      }
+    }, 800);
+  }
+
+  function showPromoStatus(msg, valid) {
+    const el = document.getElementById('promo-status');
+    el.textContent = msg;
+    el.className = 'promo-status ' + (valid ? 'valid' : 'invalid');
+  }
+
+  function resetPromoStatus() {
+    promoValid = false;
+    document.getElementById('promo-status').className = 'promo-status';
+    document.getElementById('promo-code').style.borderColor = '';
+  }
+
+  function checkPasswordStrength() {
+    const pw = document.getElementById('su-pass').value;
+    const fill = document.getElementById('pw-fill');
+    const text = document.getElementById('pw-text');
+
+    let strength = 0;
+    if (pw.length >= 8) strength++;
+    if (/[A-Z]/.test(pw)) strength++;
+    if (/[0-9]/.test(pw)) strength++;
+    if (/[^A-Za-z0-9]/.test(pw)) strength++;
+
+    const levels = [
+      { w: '0%', c: 'transparent', t: '' },
+      { w: '25%', c: '#e53935', t: 'Weak' },
+      { w: '50%', c: '#ff9800', t: 'Fair' },
+      { w: '75%', c: '#2979ff', t: 'Good' },
+      { w: '100%', c: '#00e676', t: 'Strong 💪' },
+    ];
+    const lvl = levels[strength] || levels[0];
+    fill.style.width = lvl.w;
+    fill.style.background = lvl.c;
+    text.textContent = lvl.t;
+    text.style.color = lvl.c;
+  }
+
+  function handleLogin() {
+    hideError();
+    const email = document.getElementById('login-email').value.trim();
+    const pass = document.getElementById('login-pass').value;
+
+    if (!email || !pass) { showError('Please enter your email and password.'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('Please enter a valid email address.'); return; }
+
+    const btn = document.getElementById('login-btn');
+    btn.innerHTML = '<span class="loading-btn"><div class="btn-spinner"></div> Signing in...</span>';
+    btn.disabled = true;
+
+    setTimeout(() => {
+      // Simulate auth — in production, call your API
+      const stored = localStorage.getItem('sportai_user');
+      if (stored) {
+        const user = JSON.parse(stored);
+        if (user.email === email) {
+          localStorage.setItem('sportai_session', JSON.stringify({ email, name: user.name, loggedIn: true }));
+          window.location.href = 'index.html';
+          return;
+        }
+      }
+      // Demo: allow any login with demo@sportai.com / password
+      if (email === 'demo@sportai.com' && pass === 'password') {
+        localStorage.setItem('sportai_session', JSON.stringify({ email, name: 'Demo User', loggedIn: true }));
+        window.location.href = 'index.html';
+        return;
+      }
+      btn.innerHTML = 'SIGN IN TO SPORTAI';
+      btn.disabled = false;
+      showError('Incorrect email or password. Try demo@sportai.com / password');
+    }, 1500);
+  }
+
+  function handleSignup() {
+    hideError();
+    const fname = document.getElementById('su-fname').value.trim();
+    const lname = document.getElementById('su-lname').value.trim();
+    const email = document.getElementById('su-email').value.trim();
+    const pass = document.getElementById('su-pass').value;
+    const pass2 = document.getElementById('su-pass2').value;
+    const terms = document.getElementById('su-terms').checked;
+    const promoCode = document.getElementById('promo-code').value.trim().toUpperCase();
+
+    if (!promoCode) { showError('A promo code is required to create an account.'); return; }
+    if (!promoValid) { showError('Please apply and validate your promo code first.'); return; }
+    if (!fname || !lname) { showError('Please enter your full name.'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('Please enter a valid email address.'); return; }
+    if (pass.length < 8) { showError('Password must be at least 8 characters.'); return; }
+    if (pass !== pass2) { showError('Passwords do not match.'); return; }
+    if (!terms) { showError('Please accept the Terms of Service to continue.'); return; }
+
+    const btn = document.getElementById('signup-btn');
+    btn.innerHTML = '<span class="loading-btn"><div class="btn-spinner"></div> Creating account...</span>';
+    btn.disabled = true;
+
+    setTimeout(() => {
+      // Store user
+      const user = { email, name: fname + ' ' + lname, plan: promoData.plan, promoCode, createdAt: new Date().toISOString() };
+      localStorage.setItem('sportai_user', JSON.stringify(user));
+      localStorage.setItem('sportai_session', JSON.stringify({ email, name: user.name, loggedIn: true }));
+
+      // Show success
+      document.getElementById('form-signup').classList.remove('active');
+      document.getElementById('success-state').classList.add('show');
+
+      setTimeout(() => { window.location.href = 'index.html'; }, 2500);
+    }, 1800);
+  }
+
+  function handleReset() {
+    const email = document.getElementById('reset-email').value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('Please enter a valid email.'); return; }
+    showError('');
+    alert('📧 If this email exists, a reset link has been sent. Check your inbox.');
+    hideForgot();
+  }
+
+  function showForgot() {
+    document.getElementById('form-login').classList.remove('active');
+    document.getElementById('forgot-panel').classList.add('show');
+    hideError();
+  }
+  function hideForgot() {
+    document.getElementById('forgot-panel').classList.remove('show');
+    document.getElementById('form-login').classList.add('active');
+  }
+
+  function socialAuth(provider) {
+    alert(`${provider} OAuth would be configured here with your provider credentials.`);
+  }
+
+  // Check if already logged in
+  const session = localStorage.getItem('sportai_session');
+  if (session) {
+    try {
+      const s = JSON.parse(session);
+      if (s.loggedIn) window.location.href = 'index.html';
+    } catch(e) {}
+  }
+
+  // Allow Enter key
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      const activeTab = document.querySelector('.auth-tab.active')?.id;
+      if (activeTab === 'tab-login') handleLogin();
+      else if (activeTab === 'tab-signup') handleSignup();
+    }
+  });
+</script>
+</body>
+</html>
