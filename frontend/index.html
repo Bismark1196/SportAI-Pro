@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SportAI — Professional Match Predictions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+
+<!-- TOP NAV -->
+<header class="top-nav">
+  <div class="logo">Sport<span>AI</span></div>
+  <div class="nav-spacer"></div>
+  <div class="nav-search">
+    <span style="color:var(--text-3);font-size:13px">🔍</span>
+    <input type="text" placeholder="Search teams, leagues..." id="global-search">
+  </div>
+  <div class="live-pill">● LIVE</div>
+  <button class="nav-icon-btn" id="notif-btn" title="Notifications">
+    🔔<span class="notif-dot" id="notif-dot"></span>
+  </button>
+  <button class="nav-icon-btn" id="betslip-toggle" title="Betslip">
+    🎫<span id="bs-count-badge" style="position:absolute;top:2px;right:2px;background:var(--red);color:#fff;font-family:var(--f-cond);font-size:9px;font-weight:800;padding:1px 4px;border-radius:8px;display:none">0</span>
+  </button>
+  <button class="user-avatar" id="user-btn">JS</button>
+</header>
+
+<!-- STATS TICKER -->
+<div class="stats-ticker">
+  <div class="ticker-item"><span class="ticker-val" id="t-total">—</span><span class="ticker-lbl">Matches</span></div>
+  <div class="ticker-div"></div>
+  <div class="ticker-item"><span class="ticker-val red" id="t-live">—</span><span class="ticker-lbl">Live</span></div>
+  <div class="ticker-div"></div>
+  <div class="ticker-item"><span class="ticker-val green" id="t-value">—</span><span class="ticker-lbl">Value Bets</span></div>
+  <div class="ticker-div"></div>
+  <div class="ticker-item"><span class="ticker-val">94.2%</span><span class="ticker-lbl">AI Accuracy</span></div>
+  <div class="ticker-div"></div>
+  <div class="ticker-item"><span class="ticker-val">+1,284</span><span class="ticker-lbl">Predictions Today</span></div>
+  <div class="ticker-div"></div>
+  <div class="ticker-item"><span class="ticker-val green">73.1%</span><span class="ticker-lbl">Win Rate (7d)</span></div>
+  <div class="ticker-right" id="t-updated">Loading…</div>
+</div>
+
+<div class="app-body">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Main</div>
+    <button class="nav-item active" data-page="dashboard"><span class="nav-icon">🏠</span>Dashboard</button>
+    <button class="nav-item" data-page="predictions"><span class="nav-icon">🎯</span>Predictions<span class="nav-badge green" id="val-badge">0</span></button>
+    <button class="nav-item" data-page="insights"><span class="nav-icon">🤖</span>AI Insights</button>
+    <button class="nav-item" data-page="live"><span class="nav-icon">📡</span>Live Centre<span class="nav-badge" id="live-badge">0</span></button>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Analysis</div>
+    <button class="nav-item" data-page="statistics"><span class="nav-icon">📊</span>Statistics</button>
+    <button class="nav-item" data-page="leaderboard"><span class="nav-icon">🏆</span>Leaderboard</button>
+    <button class="nav-item" data-page="history"><span class="nav-icon">📜</span>History</button>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Account</div>
+    <button class="nav-item" data-page="settings"><span class="nav-icon">⚙️</span>Settings</button>
+    <button class="nav-item" data-page="settings"><span class="nav-icon">💳</span>Subscription</button>
+  </div>
+  <div class="sidebar-bottom">
+    <div class="accuracy-widget">
+      <div class="acc-title">AI Accuracy (30d)</div>
+      <div class="acc-value">94.2%</div>
+      <div class="acc-sub">+1.4% vs last month</div>
+      <div class="acc-bar"><div class="acc-fill"></div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main style="flex:1;min-width:0;overflow-y:auto">
+
+<!-- ========================= DASHBOARD PAGE ========================= -->
+<div class="page active" id="page-dashboard">
+<div style="padding:20px">
+
+  <div class="page-header">
+    <div>
+      <div class="page-title">Dashboard</div>
+      <div class="page-subtitle">Welcome back, John. Here's today's overview.</div>
+    </div>
+    <div class="header-actions">
+      <select id="dash-sport" style="font-size:12px">
+        <option>⚽ Football</option>
+        <option>🏀 Basketball</option>
+        <option>🎾 Tennis</option>
+        <option>🏈 NFL</option>
+      </select>
+      <button class="btn btn-gold" onclick="navigateTo('predictions')">View All Predictions →</button>
+    </div>
+  </div>
+
+  <!-- Stat cards -->
+  <div class="grid-4" style="margin-bottom:20px">
+    <div class="stat-card">
+      <div class="stat-card-label">Today's Predictions</div>
+      <div class="stat-card-value" style="color:var(--gold)">47</div>
+      <div class="stat-card-sub"><span class="delta-up">↑ 12</span> vs yesterday</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-label">Live Matches</div>
+      <div class="stat-card-value" style="color:var(--red)" id="dash-live">—</div>
+      <div class="stat-card-sub"><span style="color:var(--red)">● Active now</span></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-label">Value Bets Found</div>
+      <div class="stat-card-value" style="color:var(--green-lt)" id="dash-value">—</div>
+      <div class="stat-card-sub"><span class="delta-up">↑ 3</span> high confidence</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-label">Portfolio ROI</div>
+      <div class="stat-card-value" style="color:var(--green-lt)">+18.4%</div>
+      <div class="stat-card-sub"><span class="delta-up">↑ 2.1%</span> this week</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 320px;gap:16px;margin-bottom:20px">
+    <!-- Featured match -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">⭐ Featured Match</span>
+        <span class="comp-badge live">LIVE 73'</span>
+      </div>
+      <div class="card-body">
+        <div class="vs-row">
+          <div class="vs-team">
+            <div class="vst-name" style="font-size:18px">Manchester City</div>
+            <div style="font-size:28px;font-family:var(--f-cond);font-weight:800;color:#fff;margin:4px 0">2</div>
+            <div class="vst-form">
+              <div class="form-dot fw">W</div><div class="form-dot fw">W</div>
+              <div class="form-dot fd">D</div><div class="form-dot fw">W</div>
+              <div class="form-dot fw">W</div>
+            </div>
+          </div>
+          <div style="text-align:center;padding:0 20px">
+            <div style="font-family:var(--f-cond);font-size:13px;color:var(--text-3);margin-bottom:6px">Premier League</div>
+            <div style="font-family:var(--f-cond);font-size:14px;font-weight:700;color:var(--text-2)">VS</div>
+            <div style="font-size:11px;color:var(--text-3);margin-top:6px">Etihad Stadium</div>
+          </div>
+          <div class="vs-team away">
+            <div class="vst-name" style="font-size:18px">Arsenal</div>
+            <div style="font-size:28px;font-family:var(--f-cond);font-weight:800;color:#fff;margin:4px 0">1</div>
+            <div class="vst-form" style="justify-content:flex-end">
+              <div class="form-dot fw">W</div><div class="form-dot fl">L</div>
+              <div class="form-dot fw">W</div><div class="form-dot fw">W</div>
+              <div class="form-dot fd">D</div>
+            </div>
+          </div>
+        </div>
+        <div class="pc-probs">
+          <div class="pc-prob-seg seg-home seg-best">
+            <div class="pps-lbl">Home Win</div>
+            <div class="pps-val">58%</div>
+            <div class="pps-odds">1.72</div>
+          </div>
+          <div class="pc-prob-seg seg-draw">
+            <div class="pps-lbl">Draw</div>
+            <div class="pps-val">22%</div>
+            <div class="pps-odds">3.50</div>
+          </div>
+          <div class="pc-prob-seg seg-away">
+            <div class="pps-lbl">Away Win</div>
+            <div class="pps-val">20%</div>
+            <div class="pps-odds">4.80</div>
+          </div>
+        </div>
+        <div class="ai-insight-row"><span class="ai-icon">🤖</span><strong>AI Insight:</strong> Man City dominates with 68% possession and 7 shots on target. Strong home form (W5 D0 L1). Value in Home Win at 1.72.</div>
+      </div>
+    </div>
+
+    <!-- Top value bets -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">🎯 Top Value Bets</span>
+        <button class="btn btn-outline" style="font-size:10px;padding:4px 10px" onclick="navigateTo('predictions')">See All</button>
+      </div>
+      <div style="padding:8px 0" id="top-value-list">
+        <div class="loading-state" style="padding:20px"><div class="spinner"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Matches table -->
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-header">
+      <span class="card-title">📡 Live &amp; Upcoming Matches</span>
+      <div style="display:flex;gap:6px">
+        <button class="filter-btn active" data-df="all" style="font-size:11px;padding:4px 10px">All</button>
+        <button class="filter-btn" data-df="live" style="font-size:11px;padding:4px 10px">Live</button>
+        <button class="filter-btn" data-df="upcoming" style="font-size:11px;padding:4px 10px">Upcoming</button>
+      </div>
+    </div>
+    <div style="padding:10px">
+      <div class="table-head">
+        <div class="col-lbl">Match</div>
+        <div class="col-lbl">AI Probabilities</div>
+        <div class="col-lbl center">1</div>
+        <div class="col-lbl center">X</div>
+        <div class="col-lbl center">2</div>
+        <div class="col-lbl center">Value</div>
+      </div>
+      <div id="dash-matches"><div class="loading-state"><div class="spinner"></div><p>Loading matches…</p></div></div>
+    </div>
+  </div>
+
+  <!-- Bottom row -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><span class="card-title">📈 AI Performance (7 Days)</span></div>
+      <div class="card-body">
+        <div class="mini-bar-chart" id="perf-chart"></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-3)">
+          <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">🌍 Top Leagues Today</span></div>
+      <div class="card-body" style="padding:8px 16px">
+        <div class="league-row"><span class="league-flag">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span><span class="league-name">Premier League</span><div class="league-bar"><div class="league-bar-fill" style="width:96%"></div></div><span class="league-acc">96.1%</span></div>
+        <div class="league-row"><span class="league-flag">🇪🇸</span><span class="league-name">La Liga</span><div class="league-bar"><div class="league-bar-fill" style="width:93%"></div></div><span class="league-acc">93.4%</span></div>
+        <div class="league-row"><span class="league-flag">🇩🇪</span><span class="league-name">Bundesliga</span><div class="league-bar"><div class="league-bar-fill" style="width:91%"></div></div><span class="league-acc">91.7%</span></div>
+        <div class="league-row"><span class="league-flag">🇮🇹</span><span class="league-name">Serie A</span><div class="league-bar"><div class="league-bar-fill" style="width:90%"></div></div><span class="league-acc">90.2%</span></div>
+        <div class="league-row"><span class="league-flag">🇫🇷</span><span class="league-name">Ligue 1</span><div class="league-bar"><div class="league-bar-fill" style="width:88%"></div></div><span class="league-acc">88.9%</span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ========================= PREDICTIONS PAGE ========================= -->
+<div class="page" id="page-predictions">
+<div style="padding:20px">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Predictions</div>
+      <div class="page-subtitle">AI-powered match outcome probabilities with expected value analysis</div>
+    </div>
+    <div class="header-actions">
+      <select id="pred-sport"><option>⚽ Football</option><option>🏀 Basketball</option><option>🎾 Tennis</option></select>
+      <select id="pred-conf"><option value="">All Confidence</option><option value="high">High (&gt;80%)</option><option value="med">Medium (60-80%)</option><option value="low">Low (&lt;60%)</option></select>
+    </div>
+  </div>
+  <div class="filter-bar">
+    <div class="filter-lbl">Filter</div>
+    <button class="filter-btn active" data-pf="all">All Matches</button>
+    <button class="filter-btn" data-pf="live">Live</button>
+    <button class="filter-btn" data-pf="value">Value Only</button>
+    <button class="filter-btn" data-pf="upcoming">Upcoming</button>
+    <div class="filter-spacer"></div>
+    <div class="sort-wrap">
+      <span class="sort-lbl">Sort</span>
+      <select id="pred-sort"><option value="default">Default</option><option value="conf">Confidence</option><option value="ev">Expected Value</option><option value="time">Kick-off</option></select>
+    </div>
+  </div>
+  <div id="pred-container"><div class="loading-state"><div class="spinner"></div><p>Loading predictions…</p></div></div>
+</div>
+</div>
+
+<!-- ========================= AI INSIGHTS PAGE ========================= -->
+<div class="page" id="page-insights">
+<div style="padding:20px">
+  <div class="page-header">
+    <div><div class="page-title">AI Insights</div><div class="page-subtitle">Model performance, data sources &amp; prediction methodology</div></div>
+  </div>
+
+  <div class="insight-grid" style="margin-bottom:20px">
+    <div class="insight-card">
+      <div class="ic-head"><span class="ic-head-icon">🧠</span><span class="ic-head-title">Model Performance</span></div>
+      <div class="ic-body">
+        <div class="ic-metric"><span class="ic-metric-name">Overall Accuracy</span><span class="ic-metric-val trend-up">94.2%</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Home Win Accuracy</span><span class="ic-metric-val trend-up">96.1%</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Draw Prediction</span><span class="ic-metric-val trend-flat">71.3%</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Away Win Accuracy</span><span class="ic-metric-val trend-up">89.4%</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Expected Value Bets Won</span><span class="ic-metric-val trend-up">73.1%</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Last Model Update</span><span class="ic-metric-val trend-flat">2h ago</span></div>
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="ic-head"><span class="ic-head-icon">📡</span><span class="ic-head-title">Data Sources</span></div>
+      <div class="ic-body">
+        <div class="ic-metric"><span class="ic-metric-name">Leagues Covered</span><span class="ic-metric-val">47</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Matches Analysed</span><span class="ic-metric-val">124,839</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Data Points / Match</span><span class="ic-metric-val">1,200+</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Historical Depth</span><span class="ic-metric-val">10 Years</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Live Data Latency</span><span class="ic-metric-val trend-up">&lt; 5s</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Odds Providers</span><span class="ic-metric-val">12</span></div>
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="ic-head"><span class="ic-head-icon">📊</span><span class="ic-head-title">Feature Importance</span></div>
+      <div class="ic-body">
+        <div class="ic-metric"><span class="ic-metric-name">Recent Form (5 games)</span><span class="ic-metric-val">28%</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Head-to-Head Record</span><span class="ic-metric-val">19%</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Home / Away Factor</span><span class="ic-metric-val">17%</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">xG (Expected Goals)</span><span class="ic-metric-val">14%</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Squad Injuries</span><span class="ic-metric-val">12%</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Market Odds Movement</span><span class="ic-metric-val">10%</span></div>
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="ic-head"><span class="ic-head-icon">💰</span><span class="ic-head-title">Value Betting ROI</span></div>
+      <div class="ic-body">
+        <div class="ic-metric"><span class="ic-metric-name">30-Day ROI</span><span class="ic-metric-val trend-up">+18.4%</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Bets Recommended</span><span class="ic-metric-val">214</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Average Odds</span><span class="ic-metric-val">2.14</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Strike Rate</span><span class="ic-metric-val trend-up">73.1%</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Max Drawdown</span><span class="ic-metric-val trend-down">-8.2%</span></div>
+        <div class="ic-metric"><span class="ic-metric-name">Sharpe Ratio</span><span class="ic-metric-val">2.41</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-header"><span class="card-title">🤖 AI Models Active</span></div>
+    <div style="padding:16px">
+      <div class="model-card">
+        <div class="model-header"><span class="model-name">DeepMatch v3.2</span><span class="model-version">Primary Model</span></div>
+        <div class="model-acc-bar"><div class="model-acc-fill" style="width:94%"></div></div>
+        <div class="model-stats">
+          <div class="ms-item"><strong>94.2%</strong>Accuracy</div>
+          <div class="ms-item"><strong>XGBoost Ensemble</strong>Architecture</div>
+          <div class="ms-item"><strong>847ms</strong>Inference</div>
+          <div class="ms-item"><strong>Live</strong>Status</div>
+        </div>
+      </div>
+      <div class="model-card">
+        <div class="model-header"><span class="model-name">FormNet v1.8</span><span class="model-version">Form Specialist</span></div>
+        <div class="model-acc-bar"><div class="model-acc-fill" style="width:89%"></div></div>
+        <div class="model-stats">
+          <div class="ms-item"><strong>89.1%</strong>Accuracy</div>
+          <div class="ms-item"><strong>Statistical Model</strong>Architecture</div>
+          <div class="ms-item"><strong>1.2s</strong>Inference</div>
+          <div class="ms-item"><strong>Live</strong>Status</div>
+        </div>
+      </div>
+      <div class="model-card">
+        <div class="model-header"><span class="model-name">OddsArb v2.0</span><span class="model-version">Value Detector</span></div>
+        <div class="model-acc-bar"><div class="model-acc-fill" style="width:73%"></div></div>
+        <div class="model-stats">
+          <div class="ms-item"><strong>73.1%</strong>EV Win Rate</div>
+          <div class="ms-item"><strong>Kelly Criterion</strong>Architecture</div>
+          <div class="ms-item"><strong>210ms</strong>Inference</div>
+          <div class="ms-item"><strong>Live</strong>Status</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="card-title">🔥 Prediction Accuracy Heatmap (Last 7 weeks)</span></div>
+    <div class="card-body">
+      <div class="heatmap-grid" id="heatmap"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:11px;color:var(--text-3)">
+        <span>Low</span>
+        <div style="display:flex;gap:3px">
+          <div style="width:14px;height:14px;border-radius:2px" class="hm-0"></div>
+          <div style="width:14px;height:14px;border-radius:2px" class="hm-1"></div>
+          <div style="width:14px;height:14px;border-radius:2px" class="hm-2"></div>
+          <div style="width:14px;height:14px;border-radius:2px" class="hm-3"></div>
+          <div style="width:14px;height:14px;border-radius:2px" class="hm-4"></div>
+          <div style="width:14px;height:14px;border-radius:2px" class="hm-5"></div>
+        </div>
+        <span>High Accuracy</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ========================= LIVE CENTRE PAGE ========================= -->
+<div class="page" id="page-live">
+<div style="padding:20px">
+  <div class="page-header">
+    <div><div class="page-title">Live Centre <span style="color:var(--red)">●</span></div><div class="page-subtitle">Real-time match data &amp; in-play predictions</div></div>
+  </div>
+  <div id="live-container"></div>
+</div>
+</div>
+
+<!-- ========================= STATISTICS PAGE ========================= -->
+<div class="page" id="page-statistics">
+<div style="padding:20px">
+  <div class="page-header">
+    <div><div class="page-title">Statistics</div><div class="page-subtitle">Detailed prediction analytics &amp; performance tracking</div></div>
+  </div>
+  <div class="grid-4" style="margin-bottom:20px">
+    <div class="stat-card"><div class="stat-card-label">Total Predictions</div><div class="stat-card-value" style="color:var(--gold)">12,847</div><div class="stat-card-sub"><span class="delta-up">↑ 284</span> this week</div></div>
+    <div class="stat-card"><div class="stat-card-label">Correct Predictions</div><div class="stat-card-value" style="color:var(--green-lt)">12,102</div><div class="stat-card-sub">94.2% accuracy rate</div></div>
+    <div class="stat-card"><div class="stat-card-label">Value Bets Profit</div><div class="stat-card-value" style="color:var(--green-lt)">+£4,284</div><div class="stat-card-sub">Based on £10 flat stakes</div></div>
+    <div class="stat-card"><div class="stat-card-label">Current Streak</div><div class="stat-card-value" style="color:var(--gold)">14🔥</div><div class="stat-card-sub">Consecutive correct calls</div></div>
+  </div>
+  <div class="grid-2" style="margin-bottom:20px">
+    <div class="card">
+      <div class="card-header"><span class="card-title">📈 Monthly Accuracy</span></div>
+      <div class="card-body">
+        <div class="mini-bar-chart" id="monthly-chart" style="height:120px"></div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-3);margin-top:4px">
+          <span>Oct</span><span>Nov</span><span>Dec</span><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">🎯 Prediction Types</span></div>
+      <div class="card-body" style="display:flex;align-items:center;gap:24px">
+        <div class="mini-donut">
+          <svg class="donut-svg" viewBox="0 0 80 80" width="80" height="80">
+            <circle class="donut-track" cx="40" cy="40" r="30"/>
+            <circle class="donut-seg" cx="40" cy="40" r="30" stroke="var(--blue)" stroke-dasharray="113 75"/>
+            <circle class="donut-seg" cx="40" cy="40" r="30" stroke="var(--gold)" stroke-dasharray="56 132" stroke-dashoffset="-113"/>
+            <circle class="donut-seg" cx="40" cy="40" r="30" stroke="var(--red)" stroke-dasharray="19 169" stroke-dashoffset="-169"/>
+          </svg>
+          <div class="donut-label" style="font-size:12px;color:var(--text-2)">1X2</div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px"><div style="width:10px;height:10px;border-radius:50%;background:var(--blue);flex-shrink:0"></div><span style="flex:1;color:var(--text-2)">Home Win</span><span style="font-family:var(--f-cond);font-weight:700">59.8%</span></div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px"><div style="width:10px;height:10px;border-radius:50%;background:var(--gold);flex-shrink:0"></div><span style="flex:1;color:var(--text-2)">Draw</span><span style="font-family:var(--f-cond);font-weight:700">29.6%</span></div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px"><div style="width:10px;height:10px;border-radius:50%;background:var(--red);flex-shrink:0"></div><span style="flex:1;color:var(--text-2)">Away Win</span><span style="font-family:var(--f-cond);font-weight:700">10.6%</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">🌍 Accuracy by League</span></div>
+    <div class="card-body" style="padding:8px 16px">
+      <div class="league-row"><span class="league-flag">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span><span class="league-name">Premier League</span><div class="league-bar" style="flex:0 0 200px"><div class="league-bar-fill" style="width:96.1%"></div></div><span class="league-acc">96.1%</span></div>
+      <div class="league-row"><span class="league-flag">🇪🇸</span><span class="league-name">La Liga</span><div class="league-bar" style="flex:0 0 200px"><div class="league-bar-fill" style="width:93.4%"></div></div><span class="league-acc">93.4%</span></div>
+      <div class="league-row"><span class="league-flag">🇩🇪</span><span class="league-name">Bundesliga</span><div class="league-bar" style="flex:0 0 200px"><div class="league-bar-fill" style="width:91.7%"></div></div><span class="league-acc">91.7%</span></div>
+      <div class="league-row"><span class="league-flag">🇮🇹</span><span class="league-name">Serie A</span><div class="league-bar" style="flex:0 0 200px"><div class="league-bar-fill" style="width:90.2%"></div></div><span class="league-acc">90.2%</span></div>
+      <div class="league-row"><span class="league-flag">🇫🇷</span><span class="league-name">Ligue 1</span><div class="league-bar" style="flex:0 0 200px"><div class="league-bar-fill" style="width:88.9%"></div></div><span class="league-acc">88.9%</span></div>
+      <div class="league-row"><span class="league-flag">🇳🇱</span><span class="league-name">Eredivisie</span><div class="league-bar" style="flex:0 0 200px"><div class="league-bar-fill" style="width:86.2%"></div></div><span class="league-acc">86.2%</span></div>
+      <div class="league-row"><span class="league-flag">🇵🇹</span><span class="league-name">Primeira Liga</span><div class="league-bar" style="flex:0 0 200px"><div class="league-bar-fill" style="width:84.1%"></div></div><span class="league-acc">84.1%</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ========================= LEADERBOARD PAGE ========================= -->
+<div class="page" id="page-leaderboard">
+<div style="padding:20px">
+  <div class="page-header">
+    <div><div class="page-title">Leaderboard</div><div class="page-subtitle">Top AI prediction performers this month</div></div>
+    <div class="header-actions"><select><option>This Month</option><option>This Week</option><option>All Time</option></select></div>
+  </div>
+  <div style="display:flex;justify-content:center;align-items:flex-end;gap:16px;margin-bottom:24px;padding:0 40px">
+    <div style="text-align:center;flex:1">
+      <div style="width:56px;height:56px;border-radius:50%;background:#c0c0c0;color:#111;font-family:var(--f-cond);font-size:18px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 8px">MR</div>
+      <div style="font-weight:600;font-size:13px">Maria R.</div>
+      <div style="font-family:var(--f-cond);font-size:22px;font-weight:800;color:var(--green-lt)">+£2,140</div>
+      <div style="background:var(--bg-card);border:1px solid #c0c0c0;border-radius:var(--radius) var(--radius) 0 0;height:70px;margin-top:8px;display:flex;align-items:center;justify-content:center"><span style="font-family:var(--f-cond);font-size:28px;color:#c0c0c0">2</span></div>
+    </div>
+    <div style="text-align:center;flex:1">
+      <div style="font-size:24px;margin-bottom:4px">👑</div>
+      <div style="width:64px;height:64px;border-radius:50%;background:var(--gold);color:#111;font-family:var(--f-cond);font-size:20px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 8px">JS</div>
+      <div style="font-weight:600;font-size:14px">John S.</div>
+      <div style="font-family:var(--f-cond);font-size:26px;font-weight:800;color:var(--gold)">+£3,840</div>
+      <div style="background:var(--bg-card);border:2px solid var(--gold);border-radius:var(--radius) var(--radius) 0 0;height:90px;margin-top:8px;display:flex;align-items:center;justify-content:center"><span style="font-family:var(--f-cond);font-size:36px;color:var(--gold)">1</span></div>
+    </div>
+    <div style="text-align:center;flex:1">
+      <div style="width:56px;height:56px;border-radius:50%;background:#cd7f32;color:#fff;font-family:var(--f-cond);font-size:18px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 8px">DK</div>
+      <div style="font-weight:600;font-size:13px">David K.</div>
+      <div style="font-family:var(--f-cond);font-size:22px;font-weight:800;color:var(--green-lt)">+£1,920</div>
+      <div style="background:var(--bg-card);border:1px solid #cd7f32;border-radius:var(--radius) var(--radius) 0 0;height:55px;margin-top:8px;display:flex;align-items:center;justify-content:center"><span style="font-family:var(--f-cond);font-size:24px;color:#cd7f32">3</span></div>
+    </div>
+  </div>
+  <div class="lb-head-row">
+    <span style="text-align:center">#</span><span>User</span>
+    <span>Bets</span><span>Accuracy</span><span>Profit</span><span>ROI</span>
+  </div>
+  <div id="lb-rows"></div>
+</div>
+</div>
+
+<!-- ========================= HISTORY PAGE ========================= -->
+<div class="page" id="page-history">
+<div style="padding:20px">
+  <div class="page-header">
+    <div><div class="page-title">Prediction History</div><div class="page-subtitle">Your past predictions and results</div></div>
+    <div class="header-actions"><button class="btn btn-outline">Export CSV</button></div>
+  </div>
+  <div style="display:flex;gap:10px;margin-bottom:16px">
+    <div class="stat-card" style="flex:1"><div class="stat-card-label">Total Bets</div><div class="stat-card-value" style="color:var(--gold)">284</div></div>
+    <div class="stat-card" style="flex:1"><div class="stat-card-label">Won</div><div class="stat-card-value" style="color:var(--green-lt)">208</div></div>
+    <div class="stat-card" style="flex:1"><div class="stat-card-label">Lost</div><div class="stat-card-value" style="color:var(--red)">76</div></div>
+    <div class="stat-card" style="flex:1"><div class="stat-card-label">Total Profit</div><div class="stat-card-value" style="color:var(--green-lt)">+£1,284</div></div>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">Recent Predictions</span></div>
+    <div style="padding:0" id="history-rows"></div>
+  </div>
+</div>
+</div>
+
+<!-- ========================= SETTINGS PAGE ========================= -->
+<div class="page" id="page-settings">
+<div style="padding:20px">
+  <div class="page-header">
+    <div><div class="page-title">Settings</div><div class="page-subtitle">Manage your account, notifications &amp; preferences</div></div>
+  </div>
+
+  <div class="settings-section">
+    <div class="settings-section-header"><span class="settings-section-icon">👤</span><span class="settings-section-title">Account</span></div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">John Smithson</div><div class="setting-desc">john.smithson@email.com</div></div><span class="plan-badge plan-pro">PRO</span></div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Subscription</div><div class="setting-desc">Pro Plan — renews 1 May 2026</div></div><button class="btn btn-outline">Manage</button></div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Timezone</div><div class="setting-desc">Affects kick-off times displayed</div></div><select class="setting-select"><option>Africa/Nairobi (EAT +3)</option><option>Europe/London (GMT)</option><option>America/New_York (ET)</option></select></div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Odds Format</div><div class="setting-desc">How odds are displayed</div></div><select class="setting-select"><option>Decimal (2.50)</option><option>Fractional (3/2)</option><option>American (+150)</option></select></div>
+  </div>
+
+  <div class="settings-section">
+    <div class="settings-section-header"><span class="settings-section-icon">🔔</span><span class="settings-section-title">Notifications</span></div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Goal Alerts</div><div class="setting-desc">Get notified when a goal is scored in tracked matches</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Value Bet Alerts</div><div class="setting-desc">Notify when a high-confidence value bet is found</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Pre-match Reminders</div><div class="setting-desc">Reminder 30 minutes before tracked matches</div></div><label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label></div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Daily Digest Email</div><div class="setting-desc">Summary of predictions and results each morning</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+  </div>
+
+  <div class="settings-section">
+    <div class="settings-section-header"><span class="settings-section-icon">🤖</span><span class="settings-section-title">AI Preferences</span></div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Minimum Confidence Threshold</div><div class="setting-desc">Only show predictions above this confidence level</div></div><select class="setting-select"><option>60% (All)</option><option>70%</option><option>80% (Recommended)</option><option>90% (High only)</option></select></div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Favourite Leagues</div><div class="setting-desc">Highlight matches from selected leagues</div></div><button class="btn btn-outline">Configure</button></div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Expected Value Filter</div><div class="setting-desc">Show only bets with positive expected value</div></div><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+  </div>
+
+  <div class="settings-section">
+    <div class="settings-section-header"><span class="settings-section-icon">💰</span><span class="settings-section-title">Bankroll Management</span></div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Default Stake Size</div><div class="setting-desc">Used for potential returns calculation</div></div><input type="number" value="10" style="width:80px;background:var(--bg-primary);border:1px solid var(--border);color:var(--text-1);padding:5px 8px;border-radius:3px;font-size:13px;outline:none" placeholder="£10"></div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Staking Strategy</div><div class="setting-desc">Method used to calculate recommended stake</div></div><select class="setting-select"><option>Flat Staking</option><option>Kelly Criterion</option><option>Fractional Kelly (0.25)</option></select></div>
+    <div class="setting-row"><div class="setting-info"><div class="setting-name">Bankroll Size</div><div class="setting-desc">Your total betting bankroll for Kelly calculations</div></div><input type="number" value="500" style="width:90px;background:var(--bg-primary);border:1px solid var(--border);color:var(--text-1);padding:5px 8px;border-radius:3px;font-size:13px;outline:none"></div>
+  </div>
+
+  <div class="upgrade-card">
+    <div class="upgrade-icon">⚡</div>
+    <div style="flex:1">
+      <div class="upgrade-title">Upgrade to Premium</div>
+      <div class="upgrade-desc">Unlock unlimited predictions, advanced AI models, API access, and priority support.</div>
+      <div class="upgrade-features">
+        <span class="upgrade-feature">Unlimited Predictions</span>
+        <span class="upgrade-feature">API Access</span>
+        <span class="upgrade-feature">Advanced Models</span>
+        <span class="upgrade-feature">Custom Alerts</span>
+        <span class="upgrade-feature">Export Data</span>
+        <span class="upgrade-feature">Priority Support</span>
+      </div>
+      <button class="btn btn-purple">Upgrade Now — £29/mo</button>
+    </div>
+  </div>
+</div>
+</div>
+
+</main>
+</div><!-- end app-body -->
+
+<!-- BETSLIP PANEL -->
+<div class="betslip-panel" id="betslip-panel">
+  <div class="betslip-panel-header">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="bp-title">Betslip</span>
+      <span class="bp-count" id="bp-count">0</span>
+    </div>
+    <button class="bp-close" id="bp-close-btn">✕</button>
+  </div>
+  <div class="betslip-items" id="betslip-items">
+    <div class="bp-empty"><div class="bp-empty-icon">🎫</div><p>No selections yet.<br>Click any odds to add.</p></div>
+  </div>
+  <div class="betslip-footer" id="betslip-footer" style="display:none">
+    <div class="bp-stake-row">
+      <span class="bp-stake-lbl">Stake £</span>
+      <input type="number" class="bp-stake-input" id="bp-stake" value="10" min="0.01" step="0.01">
+    </div>
+    <div class="bp-totals">
+      <div class="bp-total-row"><span>Total Odds</span><span class="val" id="bp-total-odds">1.00</span></div>
+      <div class="bp-total-row"><span>Potential Return</span><span class="val" id="bp-return">£10.00</span></div>
+      <div class="bp-total-row"><span>Potential Profit</span><span class="val" id="bp-profit" style="color:var(--green-lt)">£0.00</span></div>
+    </div>
+    <button class="bp-place-btn" id="bp-place-btn">Place Bet</button>
+  </div>
+</div>
+
+<!-- NOTIFICATIONS PANEL -->
+<div class="notif-panel" id="notif-panel">
+  <div class="notif-panel-header">
+    <span class="np-title">Notifications</span>
+    <button class="np-close" id="np-close-btn">✕</button>
+  </div>
+  <div id="notif-list"></div>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div><span class="footer-logo">Sport<span>AI</span></span><span class="footer-sep">|</span>Predictions are AI-generated. Gamble responsibly.</div>
+  <div class="footer-links">
+    <a href="#">About</a><a href="#">API Docs</a><a href="#">Privacy</a><a href="#">Terms</a><a href="#">BeGambleAware.org</a>
+  </div>
+  <div>18+ Only<span class="footer-sep">|</span>© 2026 SportAI</div>
+</footer>
+
+</div><!-- end app -->
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="dashboard.js"></script>
+</body>
+</html>
